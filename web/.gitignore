@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 신청서 접수 원본 (개인정보 포함) — 절대 커밋하지 않는다
+.data/

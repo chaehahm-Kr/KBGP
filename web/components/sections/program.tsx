@@ -3,7 +3,7 @@ import { Section, SectionHeading } from "../ui";
 
 export function Program() {
   return (
-    <Section id="program">
+    <Section id="program-two-phases">
       <SectionHeading label="Program — Two Phases">
         먼저 300개로 검증하고,
         <br />그 결과 위에서 확대합니다.

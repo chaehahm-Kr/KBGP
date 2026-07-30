@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { eligibilityConditions, meetingHref } from "@/lib/content";
+import { ApplyModal } from "./site/apply/apply-modal";
 import { StatValue, pillAccent } from "./ui";
 
 const TOTAL = eligibilityConditions.length;
@@ -63,6 +63,7 @@ function useConditions() {
 
 export function EligibilitySection() {
   const { checked, count, toggle } = useConditions();
+  const [applyOpen, setApplyOpen] = useState(false);
   const allMet = count === TOTAL;
 
   return (
@@ -80,9 +81,13 @@ export function EligibilitySection() {
         </div>
         <div className="mt-7">
           {allMet ? (
-            <Link href="/apply/check" className={pillAccent}>
+            <button
+              type="button"
+              onClick={() => setApplyOpen(true)}
+              className={`${pillAccent} cursor-pointer border-0`}
+            >
               신청 절차 시작
-            </Link>
+            </button>
           ) : (
             <a
               href={meetingHref}
@@ -94,6 +99,8 @@ export function EligibilitySection() {
         </div>
       </div>
       <ConditionCards checked={checked} onToggle={toggle} />
+
+      <ApplyModal open={applyOpen} onClose={() => setApplyOpen(false)} />
     </div>
   );
 }

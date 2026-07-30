@@ -208,6 +208,12 @@ line-height: 1.7;           /* 한글 본문은 영문보다 행간이 넉넉해
 - `prefers-reduced-motion: reduce`에서 전부 즉시 표시로 폴백
 - 패럴랙스, 커서 트레일, 3D 틸트, 타이핑 효과 금지
 
+**예외 — 이미지 프레임 내부 세틀:** 고정된 `overflow: hidden` 프레임 안에서 이미지 콘텐츠에만 적용하는 `scale 1.06 → 1.0` 세틀은 허용한다. 프레임의 바운딩 박스가 변하지 않으므로 금지 대상인 요소 전체의 pop-in scale과 구분된다. 프레임 래퍼에는 여전히 opacity와 translateY만 사용한다.
+
+**LCP 예외:** LCP 후보인 히어로 이미지 프레임(`priority`)은 opacity 페이드를 생략하고 `translateY`만 쓴다. 조상 요소의 opacity가 0이면 브라우저가 LCP 요소를 "아직 그려지지 않은 것"으로 집계해 페이드 시간만큼 LCP가 밀린다. `translate`는 이미 페인트된 것으로 집계되므로 영향이 없다.
+
+**실측 조판값 반영:** §4의 스케일은 Pretendard 800 기준으로 작성되었으나, 실제 구현의 디스플레이 폰트는 Noto Serif KR 600이다. 대형 한글에는 `letter-spacing: -0.04em` / `line-height: 1.28`을 쓴다(`display-kr` 유틸리티). 본문은 `line-height: 1.8`(`body-kr`). 66px 세리프 한글에 1.16을 주면 받침이 윗줄에 닿는다.
+
 ---
 
 ## 9. 안티슬롭 목록

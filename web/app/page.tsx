@@ -7,18 +7,21 @@ import { Process } from "@/components/sections/process";
 import { Program } from "@/components/sections/program";
 import { Sourcing } from "@/components/sections/sourcing";
 import { WhyLetusto } from "@/components/sections/why-letusto";
-import { SiteNav } from "@/components/site-nav";
+import { BenefitsSection } from "@/components/site/sections/benefits-section";
+import { SiteHeader } from "@/components/site/nav/site-header";
+import { SiteFooter } from "@/components/site/site-footer";
 import { Section, SectionHeading } from "@/components/ui";
 
 export default function Home() {
   return (
     <>
-      <SiteNav />
+      <SiteHeader />
       <main>
         <Hero />
         <WhyLetusto />
         <Program />
         <Policy />
+        <BenefitsSection />
         <Process />
         <Sourcing />
         <Section id="eligibility">
@@ -30,6 +33,7 @@ export default function Home() {
         <Faq />
         <ApplyCta />
       </main>
+      <SiteFooter />
     </>
   );
 }

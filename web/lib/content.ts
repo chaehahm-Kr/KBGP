@@ -94,13 +94,42 @@ export const processSteps = [
   { title: "본 파트너십", body: "상권 보호 정책 아래 정식 유통 확대" },
 ];
 
+/**
+ * 소싱 카테고리 비중. `items` 는 도넛 차트에서 해당 조각에 마우스를 올리거나
+ * 포커스했을 때 노출되는 대표 품목이다.
+ */
 export const categories = [
-  { label: "K-스킨케어", share: 75, active: true },
-  { label: "K-헤어 & 스칼프", share: 10, active: false },
-  { label: "K-뷰티 소품 · 툴", share: 5, active: false },
-  { label: "K-데일리 케어", share: 5, active: false },
-  { label: "K-웰니스 · 기능성 패치", share: 5, active: false },
+  {
+    label: "K-스킨케어",
+    share: 75,
+    items:
+      "시트마스크, 여드름 패치, 토너 패드, 세럼, 보습크림, 클렌저 등 기본 스킨케어",
+  },
+  {
+    label: "K-헤어 & 스칼프",
+    share: 10,
+    items: "두피 에센스, 기능성 샴푸/트리트먼트, 헤어 미스트, 보호 관리 제품군",
+  },
+  {
+    label: "K-뷰티 소품 · 툴",
+    share: 5,
+    items:
+      "화장용 퍼프, 메이크업 브러시, 셀프 네일 툴, 속눈썹 툴, 데일리 뷰티 소품",
+  },
+  {
+    label: "K-데일리 케어",
+    share: 5,
+    items: "물티슈, 핸드/풋 전용 크림, 바디 케어, 기능성 오랄 케어 상품",
+  },
+  {
+    label: "K-웰니스 · 기능성 패치",
+    share: 5,
+    items: "수소수 겔 파스, 쿨링 패치, 간편 영양 비타민류 등 미국 통관 적합 제품",
+  },
 ];
+
+export const categoryNote =
+  "위 카테고리에 명시적으로 해당하지 않더라도, 반복 구매를 이끌어낼 수 있는 상품이라면 별도로 검토 가능합니다.";
 
 export const eligibilityConditions = [
   "리오더에도 안정적으로 재생산 · 공급이 가능한 생산 캐파를 갖추고 있습니다",

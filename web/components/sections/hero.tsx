@@ -1,26 +1,13 @@
 import Link from "next/link";
 import { heroStats } from "@/lib/content";
+import { heroMedia } from "@/lib/hero-media";
+import { HeroFrame } from "@/components/site/hero/hero-frame";
+import {
+  ShelfBayFallback,
+  StoreNetworkFallback,
+} from "@/components/site/hero/hero-fallbacks";
+import { StatCard } from "@/components/site/hero/stat-card";
 import { StatValue, pillInk } from "../ui";
-
-function ImageSlot({
-  ratio,
-  caption,
-  padding,
-}: {
-  ratio: string;
-  caption: string;
-  padding: string;
-}) {
-  return (
-    <div
-      className={`image-slot flex items-end rounded-xl border border-hairline ${ratio} ${padding}`}
-    >
-      <p className="font-mono text-xs whitespace-pre-line text-slate">
-        {caption}
-      </p>
-    </div>
-  );
-}
 
 export function Hero() {
   return (
@@ -60,7 +47,7 @@ export function Hero() {
             파트너 신청하기
           </Link>
           <a
-            href="#program"
+            href="#program-two-phases"
             className="px-2 py-[18px] text-[15px] font-semibold transition-colors hover:text-accent"
           >
             프로그램 살펴보기 ↗
@@ -82,28 +69,21 @@ export function Hero() {
       </div>
 
       <div className="flex flex-col gap-4">
-        <ImageSlot
-          ratio="aspect-4/3"
-          padding="p-6"
-          caption="[ IMAGE ] Beauty Supply 매장 외관"
+        <HeroFrame
+          {...heroMedia.storeExterior}
+          priority
+          delay={0}
+          sizes="(min-width: 1024px) 46vw, 100vw"
+          fallback={<StoreNetworkFallback />}
         />
         <div className="grid grid-cols-2 gap-4">
-          <ImageSlot
-            ratio="aspect-square"
-            padding="p-5"
-            caption={"[ IMAGE ]\nStore-in-a-Store"}
+          <HeroFrame
+            {...heroMedia.storeInStore}
+            delay={120}
+            sizes="(min-width: 1024px) 23vw, 50vw"
+            fallback={<ShelfBayFallback />}
           />
-          <div className="flex aspect-square flex-col justify-between rounded-xl border border-hairline bg-paper-raised p-6">
-            <p className="micro-label text-slate">Since 2004</p>
-            <div>
-              <StatValue className="block text-[40px] leading-none">
-                $250M+
-              </StatValue>
-              <p className="body-kr mt-3 text-sm text-slate">
-                누적 판매 · 운영 브랜드 10+ · 거점 3개국
-              </p>
-            </div>
-          </div>
+          <StatCard delay={240} />
         </div>
       </div>
     </section>
