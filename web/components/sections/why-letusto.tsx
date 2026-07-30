@@ -1,87 +1,89 @@
-import { companyFacts } from "@/lib/content";
+"use client";
+
+import { Fragment } from "react";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { letustoNumbers, whyLetusto } from "@/lib/content";
 import { Section, SectionHeading, StatValue } from "../ui";
 
-function NetworkMap() {
-  return (
-    <svg
-      viewBox="0 0 420 210"
-      role="img"
-      aria-label="미국 동부 NJ · NY · PA 운영 거점 3곳과 확장 예정 상권 3곳을 표시한 네트워크 도식"
-      className="block h-auto w-full"
-    >
-      <g stroke="var(--hairline)" strokeWidth="1">
-        <line x1="0" y1="45" x2="420" y2="45" />
-        <line x1="0" y1="95" x2="420" y2="95" />
-        <line x1="0" y1="145" x2="420" y2="145" />
-        <line x1="90" y1="0" x2="90" y2="210" />
-        <line x1="190" y1="0" x2="190" y2="210" />
-        <line x1="290" y1="0" x2="290" y2="210" />
-        <line x1="380" y1="0" x2="380" y2="210" />
-      </g>
-      <circle cx="352" cy="70" r="5" fill="var(--accent)" />
-      <circle cx="338" cy="92" r="5" fill="var(--accent)" />
-      <circle cx="362" cy="112" r="5" fill="var(--accent)" />
-      <g fill="none" stroke="var(--slate)" strokeWidth="1.5">
-        <circle cx="126" cy="92" r="6" />
-        <circle cx="232" cy="134" r="6" />
-        <circle cx="296" cy="158" r="6" />
-      </g>
-      <text
-        x="318"
-        y="50"
-        fill="var(--graphite)"
-        fontSize="11"
-        fontWeight="600"
-        fontFamily="var(--font-sans)"
-      >
-        NJ · NY · PA
-      </text>
-      <text
-        x="100"
-        y="78"
-        fill="var(--slate)"
-        fontSize="11"
-        fontFamily="var(--font-sans)"
-      >
-        PLANNED
-      </text>
-    </svg>
-  );
-}
+// DESIGN.md §8: opacity 0→1 + translateY 16px→0, 500ms, 항목당 60ms 스태거.
+const containerVariants: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.06 } },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+  },
+};
 
 export function WhyLetusto() {
+  const reduce = useReducedMotion();
+
+  // prefers-reduced-motion 에서는 애니메이션 없이 최종 상태로 바로 렌더한다.
+  const listAnim = reduce
+    ? {}
+    : {
+        variants: containerVariants,
+        initial: "hidden",
+        whileInView: "show",
+        viewport: { once: true, amount: 0.2 } as const,
+      };
+
+  const itemAnim = reduce ? {} : { variants: itemVariants };
+
   return (
     <Section id="letusto">
-      <SectionHeading label="Why Letusto" headingClassName="max-w-[780px]">
-        리서치·컨설팅 회사가 아니라,
-        <br />
-        미국에서 매장을 운영하는 사업자입니다.
+      <SectionHeading label="Why Letusto" headingClassName="max-w-[880px]">
+        {whyLetusto.headlineLines.map((line, index) => (
+          <Fragment key={line}>
+            {index > 0 && <br />}
+            {line}
+          </Fragment>
+        ))}
       </SectionHeading>
 
-      <div className="grid grid-cols-1 gap-[clamp(20px,3.4vw,64px)] pt-12 lg:grid-cols-[clamp(0px,20vw,320px)_minmax(0,1fr)_minmax(0,1fr)]">
-        <p className="micro-label text-slate">Network</p>
-        <div>
-          <NetworkMap />
-          <p className="body-kr mt-5 text-[15px] text-slate">
-            동부 3개 주에서 오프라인 매장을 직접 운영하며, 확장 예정 상권은 링으로
-            표기했습니다. 온라인은 Amazon 채널을 병행합니다.
-          </p>
-        </div>
-        <dl className="border-t border-hairline">
-          {companyFacts.map((fact, i) => (
-            <div
-              key={fact.label}
-              className={`flex items-baseline justify-between py-5 ${
-                i < companyFacts.length - 1 ? "border-b border-hairline" : ""
-              }`}
-            >
-              <dt className="text-[15px] text-slate">{fact.label}</dt>
-              <dd className="m-0">
-                <StatValue className="text-[22px]">{fact.value}</StatValue>
-              </dd>
-            </div>
+      <div className="grid grid-cols-1 gap-[clamp(24px,4vw,64px)] pt-10 md:grid-cols-[clamp(0px,22vw,320px)_minmax(0,1fr)]">
+        {/* 라벨 컬럼은 비워 두고 본문을 오른쪽 컬럼에 정렬한다 (비대칭 배치). */}
+        <div aria-hidden className="hidden md:block" />
+        <div className="flex flex-col gap-6">
+          {whyLetusto.paragraphs.map((paragraph) => (
+            <p key={paragraph} className="body-kr m-0 text-[17px] text-slate">
+              {paragraph}
+            </p>
           ))}
-        </dl>
+        </div>
+      </div>
+
+      <div className="pt-[clamp(48px,6vw,88px)]">
+        <p className="micro-label text-slate">By the Numbers</p>
+        <h3 className="display-kr mt-4 mb-0 text-[24px]">숫자로 보는 Letusto</h3>
+
+        {/* DESIGN.md §5 라이트 섹션 그림자 금지 · §6 지표 블록은 카드 배경 없이
+            hairline 으로만 구획한다. */}
+        <motion.dl
+          {...listAnim}
+          className="m-0 mt-10 grid grid-cols-1 gap-x-[clamp(20px,3.4vw,64px)] gap-y-8 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          {letustoNumbers.map((item) => (
+            <motion.div
+              key={item.label}
+              data-reveal
+              {...itemAnim}
+              className="border-t border-hairline pt-6"
+            >
+              <dd className="m-0">
+                <StatValue className="block text-[32px] leading-none">
+                  {item.value}
+                </StatValue>
+              </dd>
+              <dt className="micro-label mt-3 text-slate">{item.label}</dt>
+            </motion.div>
+          ))}
+        </motion.dl>
       </div>
     </Section>
   );

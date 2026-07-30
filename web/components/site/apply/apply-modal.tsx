@@ -95,12 +95,38 @@ export function ApplyModal({
       ),
     );
 
+  /**
+   * 폼에 noValidate 를 둔 이유: 브라우저 기본 검증이 submit 을 먼저 막으면
+   * 한국어 오류 요약이 뜨지 않고, 기본 메시지는 브라우저 언어를 따라간다.
+   * 검증 경로를 서버와 같은 하나로 통일한다. required 속성은 스크린리더
+   * 안내용으로 유지한다.
+   *
+   * 오류 요약이 뜬 뒤 첫 문제 필드로 포커스를 옮긴다.
+   */
+  const focusFirstInvalid = () => {
+    const order: [boolean, string][] = [
+      [!data.companyName.trim(), "companyName"],
+      [!data.businessNumber.trim(), "businessNumber"],
+      [!data.contactName.trim(), "contactName"],
+      [!data.email.trim(), "email"],
+      [!data.phone.trim(), "phone"],
+      ...data.products.flatMap((p, i): [boolean, string][] => [
+        [!p.name.trim(), `p-name-${i}`],
+        [!p.category.trim(), `p-cat-${i}`],
+      ]),
+      [!data.agreePrivacy, "agreePrivacy"],
+    ];
+    const target = order.find(([bad]) => bad)?.[1];
+    if (target) document.getElementById(target)?.focus();
+  };
+
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     const errors = validateApplication(data);
     if (errors.length > 0) {
       setStatus({ kind: "error", errors });
+      focusFirstInvalid();
       return;
     }
 
@@ -196,7 +222,7 @@ export function ApplyModal({
           </div>
         </div>
       ) : (
-        <form onSubmit={submit} className="px-7 py-7">
+        <form onSubmit={submit} noValidate className="px-7 py-7">
           {/* 회사 정보 */}
           <fieldset className="m-0 border-0 p-0">
             <legend className={legendCls}>01 — 회사 정보</legend>

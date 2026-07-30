@@ -34,6 +34,29 @@ export const companyFacts = [
   { label: "데이터 리포트", value: "주간 · 월간" },
 ];
 
+export const whyLetusto = {
+  headlineLines: [
+    "우리는 시장을 조사하는 회사가 아니라,",
+    "미국 시장에서 직접 판매하고 운영하는 사업자입니다.",
+  ],
+  paragraphs: [
+    "20년 이상의 리테일·이커머스 경험을 바탕으로 제품 발굴, 시장 검증, 브랜딩, Amazon 판매와 오프라인 유통까지 직접 실행합니다.",
+    "자체 개발한 시장 분석 프로그램 LENS를 활용해 데이터를 실제 런칭과 운영 의사결정에 연결합니다.",
+  ],
+};
+
+export const letustoNumbers = [
+  { value: "2004", label: "Business Founded" },
+  { value: "20+ Years", label: "Retail & E-commerce Experience" },
+  { value: "US$250M+", label: "Cumulative Sales" },
+  { value: "30+", label: "Products Launched" },
+  { value: "200+", label: "SKUs Managed" },
+  { value: "10+", label: "Brands Operated" },
+  { value: "85%", label: "Launch Success Rate" },
+  { value: "3", label: "Global Operating Locations" },
+  { value: "LENS", label: "Proprietary Market Intelligence System" },
+];
+
 export const phases = [
   {
     phase: "Phase 01",
