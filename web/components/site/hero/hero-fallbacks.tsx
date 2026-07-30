@@ -59,9 +59,11 @@ export function StoreNetworkFallback() {
         NJ · NY · PA
       </text>
 
+      {/* y 는 캡션 밴드(프레임 하단 약 40px)를 피해야 한다. viewBox 300 기준
+          약 24 유닛에 해당하므로 하단에서 충분히 띄운다. */}
       <text
         x="376"
-        y="282"
+        y="248"
         textAnchor="end"
         fill="var(--slate)"
         fontSize="10"
@@ -130,18 +132,9 @@ export function ShelfBayFallback() {
         <rect x="210" y="198" width="10" height="24" />
       </g>
 
-      <text
-        x="150"
-        y="282"
-        textAnchor="middle"
-        fill="var(--slate)"
-        fontSize="10"
-        fontWeight="500"
-        letterSpacing="1.8"
-        fontFamily="var(--font-sans)"
-      >
-        STORE-IN-A-STORE
-      </text>
+      {/* SVG 안의 STORE-IN-A-STORE 라벨은 제거했다. 프레임 캡션이 이미
+          "Store-in-a-Store 진열" 이라 중복이고, 선반 도형이 하단까지 차 있어
+          캡션 밴드를 피할 여유 공간도 없다. */}
     </svg>
   );
 }

@@ -7,7 +7,14 @@ import { categories } from "./content";
 
 export const MAX_PRODUCTS = 3;
 export const MAX_FILES_PER_PRODUCT = 3;
-export const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10MB
+
+/**
+ * 첨부 용량 한도는 Vercel 서버리스 함수의 요청 바디 한도(4.5MB) 아래로 잡는다.
+ * 이 한도를 넘으면 요청이 함수 코드에 도달하기 전에 플랫폼이 413 으로 끊기
+ * 때문에, 아래 검증이 실행될 기회조차 없다. 개수보다 총량으로 제어한다.
+ */
+export const MAX_FILE_BYTES = 4 * 1024 * 1024; // 개당 4MB
+export const MAX_TOTAL_BYTES = 4 * 1024 * 1024; // 요청 전체 합계 4MB
 
 export const ACCEPTED_MIME = [
   "image/jpeg",
@@ -98,9 +105,27 @@ export function validateApplication(input: ApplicationInput): string[] {
   return errors;
 }
 
+/**
+ * 바이트를 MB 표기로 바꾼다. 한도 문구와 오류 메시지가 상수에서 파생되도록
+ * 한 곳에 모아 둔다. 실제 용량은 "ceil" 로 올려서, 한도를 넘겼는데 반올림
+ * 때문에 한도와 같은 숫자로 보이는 일이 없게 한다.
+ */
+export function formatMb(bytes: number, mode: "round" | "ceil" = "round"): string {
+  const mb = bytes / (1024 * 1024);
+  const scaled = mode === "ceil" ? Math.ceil(mb * 10) : Math.round(mb * 10);
+  const value = scaled / 10;
+  return `${Number.isInteger(value) ? value : value.toFixed(1)}MB`;
+}
+
+/** 첨부파일 전체 합계 검증. 통과하면 null. */
+export function validateTotalSize(bytes: number): string | null {
+  if (bytes <= MAX_TOTAL_BYTES) return null;
+  return `첨부파일 총 용량이 ${formatMb(MAX_TOTAL_BYTES)} 한도를 넘습니다. 현재 ${formatMb(bytes, "ceil")}입니다. 파일을 줄이거나 나눠 보내 주십시오.`;
+}
+
 export function validateFile(file: { size: number; type: string; name: string }) {
   if (file.size > MAX_FILE_BYTES) {
-    return `${file.name}: 파일이 10MB를 넘습니다.`;
+    return `${file.name}: 파일이 ${formatMb(MAX_FILE_BYTES)}를 넘습니다. (현재 ${formatMb(file.size, "ceil")})`;
   }
   // 일부 브라우저가 pdf 를 빈 type 으로 넘기므로 확장자도 함께 본다.
   const extOk = /\.(jpe?g|png|webp|pdf)$/i.test(file.name);

@@ -14,9 +14,11 @@ export type HeroSlot = {
 
 export const heroMedia: Record<"storeExterior" | "storeInStore", HeroSlot> = {
   storeExterior: {
-    /* 파일이 없으면 HeroFrame 이 SVG 도식으로 되돌아간다. 아래 경로에 4:3
-       사진을 넣는 것만으로 교체가 끝난다. */
-    src: "/images/hero/store-exterior.jpg",
+    /* 실사진 확보 후 '/images/hero/store-exterior.jpg' 로 교체한다.
+       파일이 없는 동안 경로를 넣어 두면 안 된다 — onError 폴백은 하이드레이션
+       이후에만 동작하므로 SSR 단계에서 빈 프레임이 먼저 보이고, priority
+       preload 가 실패해 LCP 지표까지 나빠진다. */
+    src: null,
     alt: "미국 현지 K Select Beauty Supply 매장 외관",
     caption: "Beauty Supply 매장 외관",
     ratio: "4:3",

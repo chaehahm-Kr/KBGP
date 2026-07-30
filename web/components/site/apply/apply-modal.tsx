@@ -5,12 +5,16 @@ import { useEffect, useRef, useState } from "react";
 import {
   ACCEPT_ATTR,
   MAX_FILES_PER_PRODUCT,
+  MAX_FILE_BYTES,
   MAX_PRODUCTS,
+  MAX_TOTAL_BYTES,
   emptyApplication,
   emptyProduct,
+  formatMb,
   productCategoryOptions,
   validateApplication,
   validateFile,
+  validateTotalSize,
   type ApplicationInput,
   type ProductInput,
 } from "@/lib/application-form";
@@ -20,6 +24,17 @@ const field =
   "mt-2 w-full rounded-lg border border-hairline bg-paper px-4 py-3 text-[15px] text-graphite";
 const labelCls = "block text-sm font-semibold text-graphite";
 const legendCls = "micro-label text-slate";
+
+/** 상품별 파일 목록을 통틀어 전송될 총 바이트. */
+const totalBytesOf = (lists: File[][]) =>
+  lists.reduce(
+    (sum, list) => sum + list.reduce((inner, file) => inner + file.size, 0),
+    0,
+  );
+
+type ApplyResponse =
+  | { ok: true; id: string }
+  | { ok: false; errors: string[] };
 
 type Status =
   | { kind: "idle" }
@@ -46,6 +61,10 @@ export function ApplyModal({
     if (open && !el.open) el.showModal();
     if (!open && el.open) el.close();
   }, [open]);
+
+  // 선택된 첨부 총량. 사용자에게 항상 노출해 한도에 가까워지는 것을 알린다.
+  const totalBytes = totalBytesOf(files);
+  const overTotal = totalBytes > MAX_TOTAL_BYTES;
 
   const set = <K extends keyof ApplicationInput>(
     key: K,
@@ -80,11 +99,17 @@ export function ApplyModal({
       setStatus({ kind: "error", errors: problems });
       return;
     }
-    setFiles((prev) =>
-      prev.map((list, i) =>
-        i === index ? [...list, ...incoming].slice(0, MAX_FILES_PER_PRODUCT) : list,
-      ),
+    // 실제로 반영될 목록을 먼저 만들고 그 총량을 본다. 한도를 넘으면 아예
+    // 추가하지 않는다 — 넘긴 상태로 담아 두면 제출 때까지 문제가 미뤄진다.
+    const next = files.map((list, i) =>
+      i === index ? [...list, ...incoming].slice(0, MAX_FILES_PER_PRODUCT) : list,
     );
+    const totalError = validateTotalSize(totalBytesOf(next));
+    if (totalError) {
+      setStatus({ kind: "error", errors: [totalError] });
+      return;
+    }
+    setFiles(next);
     setStatus({ kind: "idle" });
   };
 
@@ -124,6 +149,10 @@ export function ApplyModal({
     event.preventDefault();
 
     const errors = validateApplication(data);
+    // 총량은 전송 전에 반드시 막는다. 한도를 넘긴 요청은 함수에 닿지 못하고
+    // 플랫폼이 413 으로 끊어, 사용자에게 원인이 보이지 않는다.
+    const totalError = validateTotalSize(totalBytes);
+    if (totalError) errors.push(totalError);
     if (errors.length > 0) {
       setStatus({ kind: "error", errors });
       focusFirstInvalid();
@@ -140,9 +169,33 @@ export function ApplyModal({
 
     try {
       const res = await fetch("/api/applications", { method: "POST", body });
-      const json = (await res.json()) as
-        | { ok: true; id: string }
-        | { ok: false; errors: string[] };
+
+      // 413 은 라우트가 돌려준 것일 수도, 요청이 함수에 닿기 전 플랫폼이
+      // 끊은 것일 수도 있다. 후자는 본문이 JSON 이 아니므로 먼저 처리한다.
+      if (res.status === 413) {
+        setStatus({
+          kind: "error",
+          errors: [
+            `첨부파일 총 용량이 한도(${formatMb(MAX_TOTAL_BYTES)})를 넘어 전송이 중단되었습니다. 현재 ${formatMb(totalBytes, "ceil")}입니다. 파일 용량을 줄여 다시 시도하시거나 ${contact.email} 으로 보내 주십시오.`,
+          ],
+        });
+        return;
+      }
+
+      let json: ApplyResponse;
+      try {
+        json = (await res.json()) as ApplyResponse;
+      } catch {
+        // HTML 오류 페이지나 빈 본문이 올 수 있다. 원인 없는 "네트워크 확인"
+        // 대신 상태 코드를 그대로 보여 준다.
+        setStatus({
+          kind: "error",
+          errors: [
+            `서버 응답을 해석할 수 없습니다. (HTTP ${res.status}) 잠시 후 다시 시도하시거나 ${contact.email} 으로 보내 주십시오.`,
+          ],
+        });
+        return;
+      }
 
       if (json.ok) setStatus({ kind: "done", id: json.id });
       else setStatus({ kind: "error", errors: json.errors });
@@ -445,7 +498,18 @@ export function ApplyModal({
                     </label>
                     <p className="body-kr mt-1 text-[13px] text-slate">
                       제품 이미지 · 성분표 · 소개자료 · 최대{" "}
-                      {MAX_FILES_PER_PRODUCT}개 · jpg · png · webp · pdf · 개당 10MB
+                      {MAX_FILES_PER_PRODUCT}개 · jpg · png · webp · pdf · 개당{" "}
+                      {formatMb(MAX_FILE_BYTES)} · 전체 합계{" "}
+                      {formatMb(MAX_TOTAL_BYTES)}
+                    </p>
+                    <p
+                      className={`body-kr mt-1 text-[13px] ${overTotal ? "text-warn" : "text-slate"}`}
+                    >
+                      전체 첨부{" "}
+                      <span className="tnum font-semibold">
+                        {formatMb(totalBytes)}
+                      </span>{" "}
+                      / {formatMb(MAX_TOTAL_BYTES)}
                     </p>
                     <input
                       id={`p-file-${index}`}
@@ -553,6 +617,15 @@ export function ApplyModal({
               >
                 취소
               </button>
+              <p
+                className={`body-kr m-0 text-[13px] ${overTotal ? "text-warn" : "text-slate"}`}
+              >
+                첨부{" "}
+                <span className="tnum font-semibold">
+                  {formatMb(totalBytes)}
+                </span>{" "}
+                / {formatMb(MAX_TOTAL_BYTES)}
+              </p>
             </div>
 
             <p className="body-kr mt-6 text-[13px] text-slate">

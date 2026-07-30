@@ -4,15 +4,14 @@ import {
   MAX_PRODUCTS,
   validateApplication,
   validateFile,
+  validateTotalSize,
   type ApplicationInput,
 } from "@/lib/application-form";
 import { newApplicationId, persist } from "@/lib/application-store";
-
+import { contact } from "@/lib/content";
 
 /** 파일을 다루므로 Node 런타임에서 실행한다. */
 export const runtime = "nodejs";
-
-const MAX_TOTAL_BYTES = 40 * 1024 * 1024;
 
 function asString(v: FormDataEntryValue | null) {
   return typeof v === "string" ? v : "";
@@ -86,9 +85,12 @@ export async function POST(request: Request) {
     perProduct.set(productIndex, count);
 
     total += value.size;
-    if (total > MAX_TOTAL_BYTES) {
+    // 브라우저에서 이미 막지만 우회 가능하므로 서버가 최종 관문이다. 한도는
+    // lib/application-form.ts 에서 클라이언트와 공유한다.
+    const totalError = validateTotalSize(total);
+    if (totalError) {
       return NextResponse.json(
-        { ok: false, errors: ["첨부파일 총 용량이 40MB를 넘습니다."] },
+        { ok: false, errors: [totalError] },
         { status: 413 },
       );
     }
