@@ -93,6 +93,21 @@
   details[open] > summary .plus {
     transform: rotate(45deg);
   }
+
+  /* FAQ 카테고리 아코디언: 회전이 아니라 +/− 두 글자를 서로 바꿔 끼운다
+     (categorized faq.tsx). 화면 캡처 디자인은 45도 회전 X가 아니라
+     평평한 마이너스 기호로 열림 상태를 보여준다. */
+  .faq-icon-minus {
+    display: none;
+  }
+
+  details[open] > summary .faq-icon-plus {
+    display: none;
+  }
+
+  details[open] > summary .faq-icon-minus {
+    display: inline;
+  }
 }
 
 /* Hangul display type collapses under Latin defaults: without keep-all it
