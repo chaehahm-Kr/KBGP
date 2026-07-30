@@ -1,6 +1,6 @@
 export const contact = {
-  name: "Chae Hahm (함채환)",
-  email: "chae@letusto.com",
+  name: "Letusto Inc.",
+  email: "contact@letusto.com",
   phone: "856-383-8288",
   meetingSubject: "K-Beauty Growth Program 미팅 예약 문의",
 };

@@ -56,10 +56,10 @@ export function Faq() {
           <p className="body-kr m-0 max-w-[280px] text-[14px] text-slate">
             답변에서 다루지 않은 사항은{" "}
             <a
-              href="mailto:chae@letusto.com"
+              href="mailto:contact@letusto.com"
               className="text-graphite underline decoration-hairline underline-offset-2 hover:text-accent"
             >
-              chae@letusto.com
+              contact@letusto.com
             </a>
             으로 문의해 주십시오.
           </p>

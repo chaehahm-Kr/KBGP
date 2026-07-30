@@ -278,8 +278,8 @@ export const overseasBranch = {
 
 export const voucherContacts = [
   {
-    name: "함채환 대표",
-    email: "chae@letusto.com",
+    name: "Letusto Inc.",
+    email: "contact@letusto.com",
     phone: "+1-856-383-8288",
   },
   { name: "박제하 이사", email: "john@letusto.com", phone: null },
