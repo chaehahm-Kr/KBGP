@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #0e0e10;
+  --ink-raised: #17171a;
+  --ivory: #f4f0e8;
+  --paper: #faf9f6;
+  --paper-raised: #f2f0ea;
+  --graphite: #16171a;
+  /* DESIGN.md §3 specifies #6b6e76, which lands at 4.48:1 on --paper-raised and
+     misses WCAG AA. Darkened one step to clear 4.5:1 on both paper surfaces. */
+  --slate: #666970;
+  --hairline: #e1ded6;
+  --hairline-dark: #2a2a2e;
+  --accent: #1450e0;
+  --accent-ink: #0b2e8a;
+  --warn: #8a5a2b;
+  --dark-body: #b7b4ac;
+  --dark-label: #8e8f96;
+  --slot-stripe: #ebe8e0;
+
+  --gutter: clamp(20px, 4vw, 56px);
+  --section-top: clamp(72px, 10vw, 144px);
+  --nav-height: 66px;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-raised: var(--ink-raised);
+  --color-ivory: var(--ivory);
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-graphite: var(--graphite);
+  --color-slate: var(--slate);
+  --color-hairline: var(--hairline);
+  --color-hairline-dark: var(--hairline-dark);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-warn: var(--warn);
+  --color-dark-body: var(--dark-body);
+  --color-dark-label: var(--dark-label);
+
+  --font-sans: "Pretendard Variable", Pretendard, system-ui, sans-serif;
+  --font-serif-kr: var(--font-noto-serif-kr), serif;
+  --font-serif-latin: var(--font-instrument-serif), serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Anchor targets must clear the sticky nav or section labels land under it. */
+    scroll-padding-top: calc(var(--nav-height) + 24px);
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--graphite);
+    font-family: var(--font-sans);
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .plus {
+    transition: transform 200ms ease;
+  }
+
+  details[open] > summary .plus {
+    transform: rotate(45deg);
+  }
+}
+
+/* Hangul display type collapses under Latin defaults: without keep-all it
+   breaks mid-word, and at default tracking it reads as loose characters. */
+@utility display-kr {
+  font-family: var(--font-serif-kr);
+  font-weight: 600;
+  line-height: 1.28;
+  letter-spacing: -0.04em;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+@utility body-kr {
+  line-height: 1.8;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+@utility micro-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+@utility tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+@utility shell {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+@utility image-slot {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--paper-raised) 0 10px,
+    var(--slot-stripe) 10px 20px
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
