@@ -8,6 +8,7 @@ import {
 } from "@/lib/application-form";
 import { newApplicationId, persist } from "@/lib/application-store";
 
+
 /** 파일을 다루므로 Node 런타임에서 실행한다. */
 export const runtime = "nodejs";
 
@@ -102,18 +103,33 @@ export async function POST(request: Request) {
       { id, receivedAt: new Date().toISOString(), input },
       files,
     );
-    // 서버 로그에 접수 사실을 남긴다. 개인정보 본문은 남기지 않는다.
+    // 서버 로그에 접수 사실을 남긴다. 회사명·이메일·연락처 등 개인정보 본문은
+    // 남기지 않고 접수번호·상품 개수·파일 개수 같은 메타데이터만 남긴다.
     console.info(
       `[applications] received ${record.id} · products=${input.products.length} · files=${record.files.length}`,
     );
-    return NextResponse.json({ ok: true, id: record.id });
+
+    if (record.ephemeral) {
+      // 서버리스 임시 저장소(/tmp)에 쓴 경우. 접수 자체는 성공했지만 파일은
+      // 재배포·콜드스타트 시 사라지므로 배포 로그에서 눈에 띄어야 한다.
+      console.warn(
+        `[applications] WARNING: 임시 저장소에 기록됨 — 재배포 시 유실됨. 영구 보존을 위해 외부 저장소/메일 발송을 연결하라. (id=${record.id})`,
+      );
+    }
+
+    return NextResponse.json({
+      ok: true,
+      id: record.id,
+      ephemeral: record.ephemeral,
+    });
   } catch (error) {
+    // 실패 원인(EROFS 등)만 남긴다. 신청 내용은 로그에 싣지 않는다.
     console.error("[applications] persist failed", error);
     return NextResponse.json(
       {
         ok: false,
         errors: [
-          "접수 저장에 실패했습니다. 잠시 후 다시 시도하시거나 chae@letusto.com 으로 보내 주십시오.",
+          `접수 저장에 실패했습니다. 잠시 후 다시 시도하시거나 ${contact.email} 으로 보내 주십시오.`,
         ],
       },
       { status: 500 },
