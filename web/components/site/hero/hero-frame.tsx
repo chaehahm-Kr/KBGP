@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { HeroRatio } from "@/lib/hero-media";
 
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
@@ -45,6 +45,12 @@ export function HeroFrame({
   const reduce = useReducedMotion();
   const seconds = delay / 1000;
 
+  /* 파일이 아직 없거나 로드에 실패하면 SVG 도식으로 되돌아간다.
+     깨진 이미지 아이콘이 히어로에 뜨는 것보다 낫고, 사진을 나중에 넣어도
+     코드를 다시 건드릴 필요가 없다. */
+  const [failed, setFailed] = useState(false);
+  const showImage = Boolean(src) && !failed;
+
   /**
    * LCP 요소는 조상의 opacity 가 0이면 "그려지지 않은 것"으로 집계된다.
    * 따라서 priority 프레임은 페이드를 걸지 않고 translateY 만 쓴다.
@@ -77,13 +83,14 @@ export function HeroFrame({
       className={`relative m-0 overflow-hidden rounded-xl border border-hairline bg-paper-raised ${ratioClass[ratio]}`}
     >
       <motion.div {...innerAnim} className="absolute inset-0">
-        {src ? (
+        {showImage ? (
           <Image
-            src={src}
+            src={src as string}
             alt={alt}
             fill
             sizes={sizes}
             priority={priority}
+            onError={() => setFailed(true)}
             {...(blurDataURL
               ? ({ placeholder: "blur", blurDataURL } as const)
               : {})}

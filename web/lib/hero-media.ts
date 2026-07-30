@@ -14,13 +14,16 @@ export type HeroSlot = {
 
 export const heroMedia: Record<"storeExterior" | "storeInStore", HeroSlot> = {
   storeExterior: {
-    src: null, // '/images/hero/store-exterior.jpg' 로 교체
-    alt: "미국 현지 Beauty Supply 매장 외관",
+    /* 파일이 없으면 HeroFrame 이 SVG 도식으로 되돌아간다. 아래 경로에 4:3
+       사진을 넣는 것만으로 교체가 끝난다. */
+    src: "/images/hero/store-exterior.jpg",
+    alt: "미국 현지 K Select Beauty Supply 매장 외관",
     caption: "Beauty Supply 매장 외관",
     ratio: "4:3",
   },
   storeInStore: {
-    src: null, // '/images/hero/store-in-store.jpg' 로 교체
+    // 실사진 확보 후 '/images/hero/store-in-store.jpg' 로 교체한다.
+    src: null,
     alt: "K-Beauty 전용 Store-in-a-Store 진열대",
     caption: "Store-in-a-Store 진열",
     ratio: "1:1",
