@@ -1,3 +1,5 @@
+"use client";
+
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import Link from "next/link";
 import { contact, meetingHref } from "@/lib/content";
