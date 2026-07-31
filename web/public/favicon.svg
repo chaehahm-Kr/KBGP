@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <!-- 검정색 배경 -->
+  <rect width="200" height="200" fill="#000000" />
+  <!-- Letusto L 로고 심볼 (황금색 #E7B820) -->
+  <path fill="#E7B820" fill-rule="evenodd" d="
+    M 88 25 L 112 25 L 112 115 L 88 115 Z 
+    M 94 31 L 94 109 L 106 109 L 106 31 Z 
+    M 58 120 L 142 120 L 142 144 L 72 144 Z 
+    M 82 126 L 136 126 L 136 138 L 88 138 Z
+  " />
+</svg>

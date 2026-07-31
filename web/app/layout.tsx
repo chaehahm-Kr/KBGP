@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   title: "K Select Network — K-Beauty Growth Program",
   description:
     "브랜드는 상품에, Letusto는 미국 현지 운영에. 2004년부터 미국에서 매장과 온라인 채널을 직접 운영해 온 사업자가 K-Beauty 브랜드의 미국 진출을 집행합니다.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
