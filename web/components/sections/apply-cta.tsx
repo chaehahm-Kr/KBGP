@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import Link from "next/link";
 import { contact, meetingHref } from "@/lib/content";
 import { pillAccent, pillOutlineDark } from "../ui";
@@ -23,7 +23,7 @@ export function ApplyCta() {
   const koreanText = "제품은 브랜드가 만듭니다. 미국 시장은 함께 만듭니다.";
   const koreanChars = koreanText.split("");
 
-  const sentenceVariants = {
+  const sentenceVariants: Variants = {
     hidden: {},
     show: {
       transition: {
@@ -32,7 +32,7 @@ export function ApplyCta() {
     },
   };
 
-  const charVariants = {
+  const charVariants: Variants = {
     hidden: { opacity: reduce ? 1 : 0 },
     show: {
       opacity: 1,
@@ -40,7 +40,7 @@ export function ApplyCta() {
     },
   };
 
-  const koreanSentenceVariants = {
+  const koreanSentenceVariants: Variants = {
     hidden: {},
     show: {
       transition: {
