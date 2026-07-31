@@ -23,7 +23,7 @@ export function ApplyCta() {
               연결됩니다.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Link href="/apply/check" className={pillAccent}>
+              <Link href="/#eligibility" className={pillAccent}>
                 자가진단 시작
               </Link>
               <a href={meetingHref} className={pillOutlineDark}>

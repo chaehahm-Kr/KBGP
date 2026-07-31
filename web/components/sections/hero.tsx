@@ -109,7 +109,7 @@ export function Hero() {
               {...reveal(3)}
             >
               <Link
-                href="/apply/check"
+                href="/#eligibility"
                 className={`${pillInk} primaryCtaSheen group relative overflow-hidden`}
               >
                 파트너십 신청하기

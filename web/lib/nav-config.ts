@@ -66,7 +66,7 @@ export const primaryNav: NavEntry[] = [
   { label: "Export Voucher", href: "/export-voucher" },
 ];
 
-export const primaryCta = { label: "파트너 신청", href: "/apply/check" };
+export const primaryCta = { label: "파트너쉽 신청하기", href: "/#eligibility" };
 
 /** 스크롤 위치에 따라 활성 표시할 섹션 id 목록 (드롭다운 항목 순서와 일치). */
 export const observedSectionIds = kbgProgramGroup.items
@@ -87,7 +87,7 @@ export const footerNav = {
     label: "Apply",
     items: [
       { label: "참여 자격", href: "/#eligibility" },
-      { label: "자가진단 · 신청", href: "/apply/check" },
+      { label: "자가진단 · 신청", href: "/#eligibility" },
     ],
   },
   gov: {
