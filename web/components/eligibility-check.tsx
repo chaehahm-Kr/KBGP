@@ -78,7 +78,7 @@ export function EligibilitySection() {
           </StatValue>
           <p className="micro-label mt-3 text-slate">Conditions Met</p>
         </div>
-        <div className="mt-7 flex flex-col gap-4 items-start">
+        <div className="mt-7 flex flex-col gap-3 items-start">
           <div className="relative group inline-block">
             <button
               type="button"
@@ -101,12 +101,13 @@ export function EligibilitySection() {
               </div>
             )}
           </div>
-          <a
-            href={meetingHref}
-            className="body-kr text-[15px] font-semibold underline decoration-hairline decoration-2 underline-offset-4 transition-colors hover:text-accent"
-          >
-            준비 상황 공유 및 미팅으로 협의하기 ↗
-          </a>
+          {!allMet && (
+            <p className="body-kr m-0 text-[13px] text-warn leading-relaxed">
+              오른쪽 6가지 준비 조건을 모두 체크하시면
+              <br />
+              &apos;파트너십 신청하기&apos; 버튼이 활성화됩니다.
+            </p>
+          )}
         </div>
       </div>
       <ConditionCards checked={checked} onToggle={toggle} />
@@ -139,7 +140,7 @@ export function EligibilityFocus() {
               : "미확인 항목은 거절 사유가 아닙니다. 미팅에서 준비 방법을 함께 정리합니다."}
           </p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col items-end gap-2">
           <div className="relative group inline-block">
             <button
               type="button"
@@ -162,12 +163,13 @@ export function EligibilityFocus() {
               </div>
             )}
           </div>
-          <a
-            href={meetingHref}
-            className="body-kr text-[15px] font-semibold underline decoration-hairline decoration-2 underline-offset-4 transition-colors hover:text-accent"
-          >
-            미팅으로 협의하기 ↗
-          </a>
+          {!allMet && (
+            <p className="body-kr m-0 text-right text-[12px] text-warn leading-normal">
+              오른쪽 6가지 준비 조건을 모두 체크하시면
+              <br />
+              &apos;파트너십 신청하기&apos; 버튼이 활성화됩니다.
+            </p>
+          )}
         </div>
       </div>
 
