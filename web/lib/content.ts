@@ -123,15 +123,54 @@ export const policies = [
 ];
 
 export const processSteps = [
-  { title: "신청 접수", body: "준비 조건 확인 후 신청서 제출" },
-  { title: "상품 · 규격 검토", body: "카테고리 적합성, 현지 표기 및 인증 요건 확인" },
+  {
+    title: "신청 접수",
+    body: "준비 조건 확인 후 신청서 제출",
+    phase: "Phase 01 — Test",
+    brand: "신청서 · 제품 정보 · 상표 등록 여부",
+    letusto: "1차 서류 검토",
+    duration: "즉시",
+  },
+  {
+    title: "상품 · 규격 검토",
+    body: "카테고리 적합성, 현지 표기 및 인증 요건 확인",
+    phase: "Phase 01 — Test",
+    brand: "성분표 · 효능 주장 문구 · 사양서",
+    letusto: "화장품 / OTC 분류 판단",
+    duration: "1~2주",
+  },
   {
     title: "담당자 미팅",
     body: "공급 조건 · 일정 · First Order Protection 범위 협의",
+    phase: "Phase 01 — Test",
+    brand: "공급가 · 물량 계획",
+    letusto: "조건 제시 및 계약 초안",
+    duration: "1~2주",
   },
-  { title: "테스트 입점", body: "오프라인 240 + Amazon 60, Store-in-a-Store 진열" },
-  { title: "실판매 데이터 리뷰", body: "주간 · 월간 판매 데이터 공유 및 검증" },
-  { title: "본 파트너십", body: "상권 보호 정책 아래 정식 유통 확대" },
+  {
+    title: "테스트 입점",
+    body: "오프라인 240 + Amazon 60, Store-in-a-Store 진열",
+    phase: "Phase 01 — Test",
+    brand: "테스트 물량 300개 공급",
+    letusto: "매장 선정 · 진열 · 통관 · Amazon 운영",
+    duration: "약 90일",
+  },
+  {
+    title: "실판매 데이터 리뷰",
+    body: "주간 · 월간 판매 데이터 공유 및 검증",
+    phase: "Phase 01 — Test",
+    brand: "리포트 확인 담당자 지정",
+    letusto: "판매량 · 판매 속도 · 가격 반응 리포트",
+    duration: "월 1회",
+  },
+  {
+    title: "본 파트너십",
+    body: "상권 보호 정책 아래 정식 유통 확대",
+    phase: "Phase 02 — Partnership",
+    brand: "독점 유통권 협의 · USPTO 상표",
+    letusto: "채널 확대 · 가격 정책 관리",
+    duration: "전체 4~6개월",
+  },
 ];
 
 /**
