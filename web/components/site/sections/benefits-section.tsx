@@ -1,39 +1,12 @@
 "use client";
 
-import { motion, useReducedMotion, type Variants } from "framer-motion";
-import { Check } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
 import { benefits, benefitsHeading } from "@/lib/benefits-data";
 import { Section, SectionHeading } from "@/components/ui";
 import { HonestAssessmentBlock } from "./honest-assessment-block";
 
-const containerVariants: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.08 } },
-};
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
-  },
-};
-
 export function BenefitsSection({ items = benefits }: { items?: string[] }) {
   const reduce = useReducedMotion();
-
-  // prefers-reduced-motion 에서는 애니메이션 없이 최종 상태로 바로 렌더한다.
-  const listAnim = reduce
-    ? {}
-    : {
-        variants: containerVariants,
-        initial: "hidden",
-        whileInView: "show",
-        viewport: { once: true, amount: 0.3 } as const,
-      };
-
-  const itemAnim = reduce ? {} : { variants: itemVariants };
 
   return (
     <Section id="benefits">
@@ -42,30 +15,44 @@ export function BenefitsSection({ items = benefits }: { items?: string[] }) {
       </SectionHeading>
 
       <div className="grid grid-cols-1 gap-[clamp(24px,4vw,64px)] pt-10 md:grid-cols-[clamp(0px,22vw,320px)_minmax(0,1fr)]">
-        <p className="body-kr text-[17px] text-slate">{benefitsHeading.lead}</p>
+        <p className="body-kr text-[17px] text-slate leading-relaxed">{benefitsHeading.lead}</p>
 
-        {/* 카드 형식이되 라이트 섹션이므로 그림자는 쓰지 않는다 (DESIGN.md §5).
-            1px 헤어라인 + 12px 라운드 + paper-raised 로만 구획한다. */}
-        <motion.ul
-          {...listAnim}
-          className="m-0 grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2"
-        >
-          {items.map((item) => (
-            <motion.li
-              key={item}
-              data-reveal
-              {...itemAnim}
-              className="flex gap-4 rounded-xl border border-hairline bg-paper-raised px-6 py-6"
-            >
-              <Check
-                aria-hidden
-                strokeWidth={1.5}
-                className="mt-0.5 size-[18px] shrink-0 text-slate"
-              />
-              <p className="body-kr m-0 text-[16px]">{item}</p>
-            </motion.li>
-          ))}
-        </motion.ul>
+        <ul className="m-0 grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2">
+          {items.map((item, index) => {
+            const rowIndex = Math.floor(index / 2);
+            return (
+              <motion.li
+                key={item}
+                initial={reduce ? { opacity: 1 } : { opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{
+                  duration: reduce ? 0 : 0.5,
+                  ease: [0.16, 1, 0.3, 1],
+                  delay: reduce ? 0 : rowIndex * 0.1,
+                }}
+                className="flex items-center justify-between gap-4 rounded-xl border border-hairline border-l-4 border-l-accent bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-[3px] hover:border-accent/30 hover:shadow-md motion-reduce:hover:transform-none motion-reduce:transition-none"
+              >
+                <div className="flex items-center gap-6">
+                  {/* 왼쪽 번호 */}
+                  <span className="font-serif-latin text-[22px] font-bold text-accent shrink-0 select-none">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  {/* 텍스트 */}
+                  <p className="body-kr m-0 text-[16px] text-graphite font-medium leading-normal">
+                    {item}
+                  </p>
+                </div>
+                {/* 8번 카드(Index 7)에만 노출되는 30+ 마크 */}
+                {index === 7 && (
+                  <span className="font-serif-latin text-[28px] font-black text-accent/90 tracking-tighter shrink-0 pr-1 select-none">
+                    30+
+                  </span>
+                )}
+              </motion.li>
+            );
+          })}
+        </ul>
       </div>
 
       <HonestAssessmentBlock />
