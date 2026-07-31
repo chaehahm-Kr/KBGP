@@ -132,6 +132,7 @@ export function ApplyModal({
     const order: [boolean, string][] = [
       [!data.companyName.trim(), "companyName"],
       [!data.businessNumber.trim(), "businessNumber"],
+      [!data.companyAddress.trim(), "companyAddress"],
       [!data.contactName.trim(), "contactName"],
       [!data.email.trim(), "email"],
       [!data.phone.trim(), "phone"],
@@ -305,6 +306,18 @@ export function ApplyModal({
                   onChange={(e) => set("businessNumber", e.target.value)}
                 />
               </div>
+              <div className="sm:col-span-2">
+                <label className={labelCls} htmlFor="companyAddress">
+                  회사주소 <span className="text-warn">*</span>
+                </label>
+                <input
+                  id="companyAddress"
+                  required
+                  className={field}
+                  value={data.companyAddress}
+                  onChange={(e) => set("companyAddress", e.target.value)}
+                />
+              </div>
               <div>
                 <label className={labelCls} htmlFor="brandName">
                   브랜드명
@@ -464,6 +477,47 @@ export function ApplyModal({
                       />
                     </div>
                     <div>
+                      <label className={labelCls} htmlFor={`p-supply-${index}`}>
+                        공급가 ($)
+                      </label>
+                      <input
+                        id={`p-supply-${index}`}
+                        className={field}
+                        value={product.supplyPriceUsd}
+                        onChange={(e) =>
+                          setProduct(index, { supplyPriceUsd: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls} htmlFor={`p-volume-${index}`}>
+                        상품 포장 정보: 부피 (cm)
+                      </label>
+                      <input
+                        id={`p-volume-${index}`}
+                        placeholder="예: 10x5x3"
+                        className={field}
+                        value={product.packageVolume}
+                        onChange={(e) =>
+                          setProduct(index, { packageVolume: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls} htmlFor={`p-weight-${index}`}>
+                        상품 포장 정보: 무게 (g)
+                      </label>
+                      <input
+                        id={`p-weight-${index}`}
+                        placeholder="예: 150"
+                        className={field}
+                        value={product.packageWeight}
+                        onChange={(e) =>
+                          setProduct(index, { packageWeight: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
                       <label className={labelCls} htmlFor={`p-cap-${index}`}>
                         월 생산 가능 수량
                       </label>

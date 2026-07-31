@@ -123,7 +123,7 @@ export const policies = [
 ];
 
 export const processSteps = [
-  { title: "신청 접수", body: "참여 자격 자가진단 후 신청서 제출" },
+  { title: "신청 접수", body: "준비 조건 확인 후 신청서 제출" },
   { title: "상품 · 규격 검토", body: "카테고리 적합성, 현지 표기 및 인증 요건 확인" },
   {
     title: "담당자 미팅",

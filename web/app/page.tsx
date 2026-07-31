@@ -26,7 +26,7 @@ export default function Home() {
         <Sourcing />
         <Section id="eligibility">
           <SectionHeading label="Eligibility — Self Check">
-            참여 자격을 먼저 확인하십시오.
+            프로그램 참여를 위한 준비 조건을 확인하세요.
           </SectionHeading>
           <EligibilitySection />
         </Section>

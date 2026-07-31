@@ -69,9 +69,8 @@ export function EligibilitySection() {
   return (
     <div className="grid grid-cols-1 gap-[clamp(24px,4vw,64px)] pt-10 md:grid-cols-[clamp(0px,22vw,320px)_minmax(0,1fr)]">
       <div>
-        <p className="body-kr text-[17px] text-slate">
-          {TOTAL}개 조건을 모두 충족하면 신청서로 이어집니다. 일부만 충족하는
-          경우에도 미팅으로 협의할 수 있습니다.
+        <p className="body-kr text-[17px] text-slate leading-relaxed">
+          6가지 항목은 미국 시장 진출과 원활한 프로그램 운영을 위해 필요한 기본 준비 사항입니다. 모든 조건을 충족하지 않더라도, 준비 상황에 따라 별도 미팅을 통해 참여 가능성을 함께 검토할 수 있습니다.
         </p>
         <div className="mt-7 border-t border-hairline pt-6">
           <StatValue className="block text-[40px] leading-none">
@@ -79,23 +78,35 @@ export function EligibilitySection() {
           </StatValue>
           <p className="micro-label mt-3 text-slate">Conditions Met</p>
         </div>
-        <div className="mt-7">
-          {allMet ? (
+        <div className="mt-7 flex flex-col gap-4 items-start">
+          <div className="relative group inline-block">
             <button
               type="button"
-              onClick={() => setApplyOpen(true)}
-              className={`${pillAccent} cursor-pointer border-0`}
+              onClick={() => {
+                if (allMet) setApplyOpen(true);
+              }}
+              disabled={!allMet}
+              className={`${
+                allMet
+                  ? `${pillAccent} cursor-pointer`
+                  : "inline-flex items-center justify-center rounded-full border border-hairline bg-slate/10 px-[34px] py-[18px] text-[15px] font-semibold text-slate/50 cursor-not-allowed"
+              } border-0`}
             >
-              신청 절차 시작
+              파트너십 신청하기
             </button>
-          ) : (
-            <a
-              href={meetingHref}
-              className="body-kr text-[15px] font-semibold underline decoration-hairline decoration-2 underline-offset-4 transition-colors hover:text-accent"
-            >
-              일부만 충족합니다 — 미팅으로 협의하기 ↗
-            </a>
-          )}
+            {!allMet && (
+              <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-64 -translate-x-1/2 rounded bg-graphite px-3 py-2 text-center text-xs text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 shadow-md">
+                오른쪽 6가지 준비 조건을 모두 체크해 주시면 신청이 가능합니다.
+                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-graphite"></div>
+              </div>
+            )}
+          </div>
+          <a
+            href={meetingHref}
+            className="body-kr text-[15px] font-semibold underline decoration-hairline decoration-2 underline-offset-4 transition-colors hover:text-accent"
+          >
+            준비 상황 공유 및 미팅으로 협의하기 ↗
+          </a>
         </div>
       </div>
       <ConditionCards checked={checked} onToggle={toggle} />
@@ -107,6 +118,7 @@ export function EligibilitySection() {
 
 export function EligibilityFocus() {
   const { checked, count, toggle } = useConditions();
+  const [applyOpen, setApplyOpen] = useState(false);
   const allMet = count === TOTAL;
 
   return (
@@ -123,23 +135,43 @@ export function EligibilityFocus() {
           </p>
           <p className="body-kr mt-2 text-sm text-warn">
             {allMet
-              ? "모든 조건을 충족했습니다. 담당자 검토 단계로 이어집니다."
+              ? "모든 조건을 충족했습니다. 파트너십 신청서를 작성해 주십시오."
               : "미확인 항목은 거절 사유가 아닙니다. 미팅에서 준비 방법을 함께 정리합니다."}
           </p>
         </div>
-        {allMet ? (
-          <a href={meetingHref} className={pillAccent}>
-            담당자에게 신청 접수
-          </a>
-        ) : (
-          <span
-            aria-disabled
-            className="inline-flex cursor-not-allowed items-center justify-center rounded-full border border-hairline px-[34px] py-[18px] text-[15px] font-semibold text-slate"
+        <div className="flex items-center gap-4">
+          <div className="relative group inline-block">
+            <button
+              type="button"
+              onClick={() => {
+                if (allMet) setApplyOpen(true);
+              }}
+              disabled={!allMet}
+              className={`${
+                allMet
+                  ? `${pillAccent} cursor-pointer`
+                  : "inline-flex items-center justify-center rounded-full border border-hairline bg-slate/10 px-[34px] py-[18px] text-[15px] font-semibold text-slate/50 cursor-not-allowed"
+              } border-0`}
+            >
+              파트너십 신청하기
+            </button>
+            {!allMet && (
+              <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-64 -translate-x-1/2 rounded bg-graphite px-3 py-2 text-center text-xs text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 shadow-md">
+                오른쪽 6가지 준비 조건을 모두 체크해 주시면 신청이 가능합니다.
+                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-graphite"></div>
+              </div>
+            )}
+          </div>
+          <a
+            href={meetingHref}
+            className="body-kr text-[15px] font-semibold underline decoration-hairline decoration-2 underline-offset-4 transition-colors hover:text-accent"
           >
-            {TOTAL - count}개 항목 남음
-          </span>
-        )}
+            미팅으로 협의하기 ↗
+          </a>
+        </div>
       </div>
+
+      <ApplyModal open={applyOpen} onClose={() => setApplyOpen(false)} />
     </>
   );
 }

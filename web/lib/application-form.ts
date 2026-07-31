@@ -13,8 +13,8 @@ export const MAX_FILES_PER_PRODUCT = 3;
  * 이 한도를 넘으면 요청이 함수 코드에 도달하기 전에 플랫폼이 413 으로 끊기
  * 때문에, 아래 검증이 실행될 기회조차 없다. 개수보다 총량으로 제어한다.
  */
-export const MAX_FILE_BYTES = 4 * 1024 * 1024; // 개당 4MB
-export const MAX_TOTAL_BYTES = 4 * 1024 * 1024; // 요청 전체 합계 4MB
+export const MAX_FILE_BYTES = 10 * 1024 * 1024; // 개당 10MB
+export const MAX_TOTAL_BYTES = 10 * 1024 * 1024; // 요청 전체 합계 10MB
 
 export const ACCEPTED_MIME = [
   "image/jpeg",
@@ -32,6 +32,9 @@ export type ProductInput = {
   name: string;
   category: string;
   priceKrw: string;
+  supplyPriceUsd: string;
+  packageVolume: string;
+  packageWeight: string;
   monthlyCapacity: string;
   note: string;
 };
@@ -39,6 +42,7 @@ export type ProductInput = {
 export type ApplicationInput = {
   companyName: string;
   businessNumber: string;
+  companyAddress: string;
   brandName: string;
   homepage: string;
   contactName: string;
@@ -53,6 +57,9 @@ export const emptyProduct = (): ProductInput => ({
   name: "",
   category: "",
   priceKrw: "",
+  supplyPriceUsd: "",
+  packageVolume: "",
+  packageWeight: "",
   monthlyCapacity: "",
   note: "",
 });
@@ -60,6 +67,7 @@ export const emptyProduct = (): ProductInput => ({
 export const emptyApplication = (): ApplicationInput => ({
   companyName: "",
   businessNumber: "",
+  companyAddress: "",
   brandName: "",
   homepage: "",
   contactName: "",
@@ -79,6 +87,8 @@ export function validateApplication(input: ApplicationInput): string[] {
   if (!input.companyName.trim()) errors.push("회사명을 입력해 주십시오.");
   if (!input.businessNumber.trim())
     errors.push("사업자등록번호를 입력해 주십시오.");
+  if (!input.companyAddress.trim())
+    errors.push("회사주소를 입력해 주십시오.");
   if (!input.contactName.trim()) errors.push("담당자명을 입력해 주십시오.");
 
   if (!input.email.trim()) errors.push("이메일을 입력해 주십시오.");
