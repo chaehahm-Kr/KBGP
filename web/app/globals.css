@@ -144,8 +144,124 @@
   padding-inline: var(--gutter);
 }
 
-/* 대각선 스트라이프 플레이스홀더는 SVG 폴백으로 대체했으므로 제거했다.
-   (components/site/hero/hero-fallbacks.tsx) */
+/* 히어로 우측 카드(components/site/hero/*)의 호버·등장 장식. 그리드/텍스트
+   토큰과 달리 이 값들은 해당 카드 전용이라 여기 한 곳에 모아 둔다. */
+@keyframes headquartersPulse {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+
+.headquartersPulse {
+  transform-origin: 50%;
+  transform-box: fill-box;
+  animation: 4s ease-out infinite headquartersPulse;
+}
+
+.primaryCtaSheen {
+  transition:
+    transform 0.32s cubic-bezier(0.22, 0.8, 0.24, 1),
+    box-shadow 0.32s;
+}
+
+.primaryCtaSheen:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px #0e0e101f;
+}
+
+.primaryCtaSheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    #ffffff26 50%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+.primaryCtaSheen:hover::after {
+  transition: transform 0.6s;
+  transform: translateX(100%);
+}
+
+.secondaryCtaHover {
+  transition: color 0.25s;
+}
+
+.secondaryCtaHover:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.displayShelfHover {
+  transition:
+    transform 0.35s cubic-bezier(0.22, 0.8, 0.24, 1),
+    box-shadow 0.35s;
+}
+
+.displayShelfHover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px #0e0e100a;
+}
+
+@keyframes displayShelfSweep {
+  0% {
+    opacity: 0.5;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+.displayShelfHover:hover .displayShelfSweep {
+  animation: 0.7s forwards displayShelfSweep;
+}
+
+.onlineLaunchHover {
+  transition:
+    transform 0.35s cubic-bezier(0.22, 0.8, 0.24, 1),
+    box-shadow 0.35s;
+}
+
+.onlineLaunchHover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px #0e0e100f;
+}
+
+.onlineLaunchArrow,
+.onlineLaunchCursor,
+.onlineLaunchBag,
+.onlineLaunchBox {
+  transition: transform 0.35s cubic-bezier(0.22, 0.8, 0.24, 1);
+}
+
+.onlineLaunchHover:hover .onlineLaunchArrow {
+  transform: translate(-2px, -3px);
+}
+
+.onlineLaunchHover:hover .onlineLaunchCursor {
+  transform: translate(2px, -2px);
+}
+
+.onlineLaunchHover:hover .onlineLaunchBag {
+  transform: translateY(-1px);
+}
+
+.onlineLaunchHover:hover .onlineLaunchBox {
+  transform: translateY(-2px);
+}
 
 @media (prefers-reduced-motion: reduce) {
   html {

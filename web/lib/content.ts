@@ -20,11 +20,28 @@ export const navItems = [
   { label: "FAQ", href: "#faq" },
 ];
 
-export const heroStats = [
-  { value: "10", label: "US Retail Stores" },
-  { value: "300", label: "Test Placements" },
-  { value: "$250M+", label: "Cumulative Sales" },
-];
+export const heroLead =
+  "“우리 제품이 미국에서 통할까?” 이 질문에 추측이 아닌 데이터로 답해 드립니다. 오랜 기간 협력해 온 최대 4개 주 10곳의 리테일 매장에서 실제로 제품을 검증시키고, 세계 최대 온라인 플랫폼인 US Amazon에 동시 런칭됩니다. 매대와 아마존의 실제 판매 데이터와 고객 반응을 함께 확보해, 다음 액션 플랜을 감이 아닌 근거로 설계합니다.";
+
+export const heroNetwork = {
+  label: "BEAUTY SUPPLY 파트너 네트워크",
+  statesLine1: "NJ · NY · PA · DE ·",
+  statesLine2: "MD · VA · NC",
+  summary: "10개 스토어 · 7개 주",
+  legendPartner: "파트너 스토어 (10)",
+  legendHq: "본사 (SOUTH NEW JERSEY)",
+};
+
+export const storeInAStoreCard = {
+  label: "STORE-IN-A-STORE 모델",
+  caption: "현지 뷰티 전문 매장 내 검증된 공간 확보",
+};
+
+export const onlineLaunchCard = {
+  label: "ONLINE LAUNCH",
+  captionLine1: "세계 최대 온라인 플랫폼",
+  captionLine2: "Amazon 동시 런칭",
+};
 
 export const companyFacts = [
   { label: "설립", value: "2004" },
