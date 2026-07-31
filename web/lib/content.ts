@@ -70,8 +70,8 @@ export const letustoNumbers = [
   { value: "200+", label: "SKUs Managed" },
   { value: "10+", label: "Brands Operated" },
   { value: "85%", label: "Launch Success Rate" },
-  { value: "3", label: "Global Operating Locations" },
-  { value: "LENS", label: "Proprietary Market Intelligence System" },
+  { value: "3", label: "OPERATING BASES (U.S. · KOREA · CHINA)" },
+  { value: "1", label: "PROPRIETARY SYSTEM LENS (Letusto Enterprise & Navigation System)" },
 ];
 
 export const phases = [
