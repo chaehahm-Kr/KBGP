@@ -14,7 +14,7 @@ export const benefits: string[] = [
 
 export const benefitsHeading = {
   label: "Benefits",
-  title: "중소 브랜드가 얻는 구체적 가치",
+  title: "KGB PROGRAM 이 브랜드사에 제공하는 실질적 가치",
   lead: "혜택을 약속으로 말하지 않고, 구조로 말합니다.",
 };
 
