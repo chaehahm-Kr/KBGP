@@ -39,6 +39,11 @@ export type ProductInput = {
   note: string;
 };
 
+export type EligibilityResponseInput = {
+  itemKey: string;
+  response: "available" | "discussion_required";
+};
+
 export type ApplicationInput = {
   companyName: string;
   businessNumber: string;
@@ -51,6 +56,7 @@ export type ApplicationInput = {
   phone: string;
   products: ProductInput[];
   agreePrivacy: boolean;
+  eligibilityResponses?: EligibilityResponseInput[];
 };
 
 export const emptyProduct = (): ProductInput => ({
@@ -76,6 +82,7 @@ export const emptyApplication = (): ApplicationInput => ({
   phone: "",
   products: [emptyProduct()],
   agreePrivacy: false,
+  eligibilityResponses: [],
 });
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -111,6 +118,27 @@ export function validateApplication(input: ApplicationInput): string[] {
 
   if (!input.agreePrivacy)
     errors.push("개인정보 수집·이용에 동의해 주십시오.");
+
+  const allowedKeys = [
+    "stable_supply",
+    "us_regulatory_compliance",
+    "initial_test_quantity",
+    "north_america_distribution",
+    "joint_marketing",
+    "sales_content_support",
+  ];
+  if (!input.eligibilityResponses || input.eligibilityResponses.length !== 6) {
+    errors.push("6개 준비 사항 확인을 모두 완료해야 신청할 수 있습니다.");
+  } else {
+    input.eligibilityResponses.forEach((res) => {
+      if (!allowedKeys.includes(res.itemKey)) {
+        errors.push(`준비 사항 항목이 올바르지 않습니다: ${res.itemKey}`);
+      }
+      if (res.response !== "available" && res.response !== "discussion_required") {
+        errors.push(`준비 사항 응답 값이 올바르지 않습니다: ${res.response}`);
+      }
+    });
+  }
 
   return errors;
 }

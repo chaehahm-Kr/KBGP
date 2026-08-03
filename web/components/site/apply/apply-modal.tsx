@@ -149,7 +149,28 @@ export function ApplyModal({
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const errors = validateApplication(data);
+    let eligibilityResponses: { itemKey: string; response: "available" | "discussion_required" }[] = [];
+    try {
+      const saved = sessionStorage.getItem("kbeauty_eligibility_responses");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.eligibilityResponses) {
+          eligibilityResponses = parsed.eligibilityResponses.map((r: any) => ({
+            itemKey: r.itemKey,
+            response: r.response,
+          }));
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load eligibility responses from sessionStorage:", e);
+    }
+
+    const payloadData = {
+      ...data,
+      eligibilityResponses,
+    };
+
+    const errors = validateApplication(payloadData);
     // 총량은 전송 전에 반드시 막는다. 한도를 넘긴 요청은 함수에 닿지 못하고
     // 플랫폼이 413 으로 끊어, 사용자에게 원인이 보이지 않는다.
     const totalError = validateTotalSize(totalBytes);
@@ -163,7 +184,7 @@ export function ApplyModal({
     setStatus({ kind: "sending" });
 
     const body = new FormData();
-    body.append("payload", JSON.stringify(data));
+    body.append("payload", JSON.stringify(payloadData));
     files.forEach((list, productIndex) => {
       list.forEach((file, n) => body.append(`file_${productIndex}_${n}`, file));
     });
