@@ -210,13 +210,50 @@ export const categories = [
 export const categoryNote =
   "위 카테고리에 명시적으로 해당하지 않더라도, 반복 구매를 이끌어낼 수 있는 상품이라면 별도로 검토 가능합니다.";
 
-export const eligibilityConditions = [
-  "리오더에도 안정적으로 재생산 · 공급이 가능한 생산 캐파를 갖추고 있습니다",
-  "미국 상표권을 등록했거나 진행할 의지가 있고, 성분 · 라벨링 인증에 대응할 수 있습니다",
-  "초도 테스트 물량 300개(오프라인 240 + 온라인 60)를 공급할 수 있습니다",
-  "타 총판 · 이커머스와 중복 없이 공급 우선권을 제공할 수 있습니다",
-  "목표 달성 시 마케팅 비용의 일부를 분담할 의지가 있습니다",
-  "제품 이미지 · 사용법 · 루틴 등 판매용 콘텐츠를 제공할 수 있습니다",
+export interface EligibilityCondition {
+  key: string;
+  number: number;
+  title: string;
+  description: string;
+}
+
+export const eligibilityConditions: EligibilityCondition[] = [
+  {
+    key: "stable_supply",
+    number: 1,
+    title: "안정적인 제품 공급",
+    description: "현재 판매 중이거나 출시를 준비 중인 제품으로, 테스트 이후에도 안정적인 생산과 지속적인 공급이 가능합니다."
+  },
+  {
+    key: "us_regulatory_compliance",
+    number: 2,
+    title: "미국 시장 규정 대응",
+    description: "미국 진출에 필요한 성분, 인증, 등록, 라벨링 및 통관 요건을 확인하고 필요한 보완 절차에 협력할 수 있습니다."
+  },
+  {
+    key: "initial_test_stock",
+    number: 3,
+    title: "초기 테스트 물량 공급",
+    description: "온·오프라인 실제 판매 테스트를 위한 제품별 약 300개의 초기 물량을 공급할 수 있습니다."
+  },
+  {
+    key: "north_america_distribution",
+    number: 4,
+    title: "북미 유통 권한 협의",
+    description: "테스트 결과와 협력 조건이 충족될 경우, 기존 계약과 충돌하지 않는 범위에서 북미 유통 권한을 협의할 수 있습니다."
+  },
+  {
+    key: "joint_marketing",
+    number: 5,
+    title: "공동 마케팅 참여",
+    description: "시장 테스트 이후 본격적인 판매 확대를 위해, 상호 협의된 기간과 범위 내에서 마케팅 활동에 참여할 의향이 있습니다."
+  },
+  {
+    key: "sales_content_collaboration",
+    number: 6,
+    title: "판매 콘텐츠 협력",
+    description: "제품 이미지, 영상, 사용 방법, 상세 정보 등 판매에 필요한 콘텐츠를 제공하거나 제작에 협력할 수 있습니다."
+  }
 ];
 
 export type FaqItem = { q: string; a: string };
