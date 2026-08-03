@@ -1,11 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
-  <!-- 검정색 배경 -->
-  <rect width="200" height="200" fill="#000000" />
-  <!-- Letusto L 로고 심볼 (황금색 #E7B820) -->
-  <path fill="#E7B820" fill-rule="evenodd" d="
-    M 88 25 L 112 25 L 112 115 L 88 115 Z 
-    M 94 31 L 94 109 L 106 109 L 106 31 Z 
-    M 58 120 L 142 120 L 142 144 L 72 144 Z 
-    M 82 126 L 136 126 L 136 138 L 88 138 Z
-  " />
+  <style>
+    .frame { stroke: #111111; }
+    .symbol { fill: #111111; }
+    @media (prefers-color-scheme: dark) {
+      .frame { stroke: #ffffff; }
+      .symbol { fill: #ffffff; }
+    }
+  </style>
+  <!-- 사각형 프레임 -->
+  <path class="frame" d="M 122 162 H 38 V 38 H 162 V 122" stroke-width="16" stroke-linecap="square" stroke-linejoin="miter" fill="none" />
+  
+  <!-- 중앙의 K 자 -->
+  <path class="symbol" d="M 72 60 H 90 V 98 L 125 60 H 144 L 106 102 L 145 140 H 126 L 90 106 V 140 H 72 Z" />
+  
+  <!-- 우하단 체크 마크 -->
+  <path d="M 116 150 L 138 172 L 174 122" stroke="#8a93a6" stroke-width="16" stroke-linecap="square" stroke-linejoin="miter" fill="none" />
 </svg>

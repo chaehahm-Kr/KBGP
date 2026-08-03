@@ -2,12 +2,51 @@ import type { ReactNode } from "react";
 
 export function Wordmark({ className = "" }: { className?: string }) {
   return (
-    <span
-      className={`font-serif-kr text-[18px] tracking-[-0.04em] whitespace-nowrap sm:text-[20px] ${className}`}
-    >
-      <span className="font-bold">K Select</span>{" "}
-      <span className="font-normal">Network</span>
-    </span>
+    <div className={`flex items-center gap-3 select-none ${className}`}>
+      {/* 새로운 로고 심볼 (SVG) */}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 200 200"
+        className="size-[30px] shrink-0 sm:size-[34px]"
+      >
+        <path
+          d="M 122 162 H 38 V 38 H 162 V 122"
+          stroke="currentColor"
+          strokeWidth="16"
+          strokeLinecap="square"
+          strokeLinejoin="miter"
+          fill="none"
+          className="text-graphite"
+        />
+        <path
+          d="M 72 60 H 90 V 98 L 125 60 H 144 L 106 102 L 145 140 H 126 L 90 106 V 140 H 72 Z"
+          fill="currentColor"
+          className="text-graphite"
+        />
+        <path
+          d="M 116 150 L 138 172 L 174 122"
+          stroke="#8a93a6"
+          strokeWidth="16"
+          strokeLinecap="square"
+          strokeLinejoin="miter"
+          fill="none"
+        />
+      </svg>
+
+      {/* 텍스트 블록 */}
+      <div className="flex flex-col justify-center leading-none">
+        {/* K SELECT NETWORK 타이틀 */}
+        <span className="font-sans text-[13px] font-black tracking-normal text-graphite sm:text-[15px] uppercase">
+          K SELECT NETWORK
+        </span>
+        {/* 구분선 */}
+        <div className="my-[3px] h-[1px] w-full bg-hairline" />
+        {/* 서브텍스트 */}
+        <span className="font-sans text-[6.5px] font-bold tracking-widest text-slate sm:text-[7.5px] uppercase">
+          Curated. Connected. Growing Together.
+        </span>
+      </div>
+    </div>
   );
 }
 
