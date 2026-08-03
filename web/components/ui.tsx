@@ -10,7 +10,7 @@ export function Wordmark({ className = "" }: { className?: string }) {
         className="size-[30px] shrink-0 sm:size-[34px]"
       >
         <path
-          d="M 122 162 H 38 V 38 H 162 V 122"
+          d="M 112 162 H 38 V 38 H 162 V 112"
           stroke="currentColor"
           strokeWidth="16"
           strokeLinecap="square"
@@ -19,12 +19,12 @@ export function Wordmark({ className = "" }: { className?: string }) {
           className="text-graphite"
         />
         <path
-          d="M 72 60 H 90 V 98 L 125 60 H 144 L 106 102 L 145 140 H 126 L 90 106 V 140 H 72 Z"
+          d="M 72 60 H 90 V 98 L 123 60 H 142 L 105 100 L 143 140 H 124 L 90 102 V 140 H 72 Z"
           fill="currentColor"
           className="text-graphite"
         />
         <path
-          d="M 116 150 L 138 172 L 174 122"
+          d="M 105 142 L 132 168 L 174 114"
           stroke="#8a93a6"
           strokeWidth="16"
           strokeLinecap="square"

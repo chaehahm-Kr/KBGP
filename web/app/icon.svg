@@ -8,11 +8,11 @@
     }
   </style>
   <!-- 사각형 프레임 -->
-  <path class="frame" d="M 122 162 H 38 V 38 H 162 V 122" stroke-width="16" stroke-linecap="square" stroke-linejoin="miter" fill="none" />
+  <path class="frame" d="M 112 162 H 38 V 38 H 162 V 112" stroke-width="16" stroke-linecap="square" stroke-linejoin="miter" fill="none" />
   
   <!-- 중앙의 K 자 -->
-  <path class="symbol" d="M 72 60 H 90 V 98 L 125 60 H 144 L 106 102 L 145 140 H 126 L 90 106 V 140 H 72 Z" />
+  <path class="symbol" d="M 72 60 H 90 V 98 L 123 60 H 142 L 105 100 L 143 140 H 124 L 90 102 V 140 H 72 Z" />
   
   <!-- 우하단 체크 마크 -->
-  <path d="M 116 150 L 138 172 L 174 122" stroke="#8a93a6" stroke-width="16" stroke-linecap="square" stroke-linejoin="miter" fill="none" />
+  <path d="M 105 142 L 132 168 L 174 114" stroke="#8a93a6" stroke-width="16" stroke-linecap="square" stroke-linejoin="miter" fill="none" />
 </svg>
