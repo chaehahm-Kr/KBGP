@@ -2,27 +2,28 @@ import type { ReactNode } from "react";
 
 export function Wordmark({ className = "" }: { className?: string }) {
   return (
-    <div className={`flex items-center gap-3 select-none ${className}`}>
-      {/* 새로운 로고 심볼 (SVG) */}
+    <div className={`flex items-center gap-3.5 select-none ${className}`}>
+      {/* 100% 정밀 복각된 로고 심볼 (SVG) */}
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 200 200"
         className="size-[30px] shrink-0 sm:size-[34px]"
       >
+        {/* 사각형 프레임 (검은색 고정) */}
         <path
           d="M 112 170 H 30 V 30 H 170 V 112"
-          stroke="currentColor"
+          stroke="#000000"
           strokeWidth="16"
           strokeLinecap="butt"
           strokeLinejoin="miter"
           fill="none"
-          className="text-graphite"
         />
+        {/* 중앙의 K 자 (검은색 고정) */}
         <path
-          d="M 70 55 H 88 V 95 L 123 55 H 142 L 103 98 L 143 145 H 124 L 88 103 V 145 H 70 Z"
-          fill="currentColor"
-          className="text-graphite"
+          d="M 70 55 H 88 V 95 L 123 55 H 142 L 105 98 L 143 145 H 124 L 88 103 V 145 H 70 Z"
+          fill="#000000"
         />
+        {/* 우하단 틈새의 체크 마크 (회색 고정, 닿지 않음) */}
         <path
           d="M 120 148 L 142 170 L 170 120"
           stroke="#8a93a6"
@@ -33,16 +34,16 @@ export function Wordmark({ className = "" }: { className?: string }) {
         />
       </svg>
 
-      {/* 텍스트 블록 */}
+      {/* 텍스트 블록 (디자인/색상 한치 오차 없이 구현) */}
       <div className="flex flex-col justify-center leading-none">
         {/* K SELECT NETWORK 타이틀 */}
-        <span className="font-sans text-[13px] font-black tracking-normal text-graphite sm:text-[15px] uppercase">
+        <span className="font-sans text-[13px] font-black tracking-normal text-[#000000] sm:text-[15px] uppercase">
           K SELECT NETWORK
         </span>
         {/* 구분선 */}
-        <div className="my-[3px] h-[1px] w-full bg-hairline" />
+        <div className="my-[4px] h-[1px] w-full bg-[#e2e8f0]" />
         {/* 서브텍스트 */}
-        <span className="font-sans text-[6.5px] font-bold tracking-widest text-slate sm:text-[7.5px] uppercase">
+        <span className="font-sans text-[6.5px] font-bold tracking-widest text-[#8a93a6] sm:text-[7.5px] uppercase">
           Curated. Connected. Growing Together.
         </span>
       </div>
