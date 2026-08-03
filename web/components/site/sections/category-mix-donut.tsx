@@ -224,6 +224,7 @@ export function CategoryMixDonut() {
         <p className="body-kr mt-4 text-[12px] text-slate leading-relaxed border-t border-hairline/50 pt-3">
           {categoryNote}
         </p>
+      </div>
     </div>
   );
 }
