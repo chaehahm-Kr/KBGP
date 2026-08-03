@@ -16,7 +16,8 @@ export function Faq() {
       <SectionHeading label="FAQ">자주 묻는 질문</SectionHeading>
 
       <div className="grid grid-cols-1 gap-[clamp(24px,4vw,64px)] pt-10 md:grid-cols-[clamp(0px,22vw,320px)_minmax(0,1fr)]">
-        <div className="flex flex-col gap-6">
+        {/* 데스크톱 전용 카테고리 내비게이션 (768px 이상) */}
+        <div className="hidden md:flex flex-col gap-6">
           <p className="micro-label text-slate">Category</p>
           <nav aria-label="FAQ 카테고리" className="flex flex-col gap-1">
             {faqCategories.map((category, index) => {
@@ -63,6 +64,38 @@ export function Faq() {
             </a>
             으로 문의해 주십시오.
           </p>
+        </div>
+
+        {/* 모바일 전용 카테고리 드롭다운 (767px 이하) */}
+        <div className="block md:hidden">
+          <p className="micro-label text-slate mb-2.5">Category</p>
+          <div className="relative">
+            <select
+              value={activeIndex}
+              onChange={(e) => setActiveIndex(Number(e.target.value))}
+              className="body-kr w-full rounded-lg border border-hairline bg-paper-raised px-4.5 py-4 text-[15px] font-bold text-graphite appearance-none outline-none focus:border-accent select-none cursor-pointer"
+            >
+              {faqCategories.map((category, index) => (
+                <option key={category.label} value={index}>
+                  {pad(index + 1)} {category.label} ({category.items.length})
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-4.5 flex items-center text-slate">
+              <span className="text-[10px] select-none">▼</span>
+            </div>
+          </div>
+          <p className="body-kr m-0 mt-4.5 text-[13px] text-slate">
+            답변에서 다루지 않은 사항은{" "}
+            <a
+              href="mailto:contact@letusto.com"
+              className="text-graphite underline decoration-hairline underline-offset-2 hover:text-accent font-semibold"
+            >
+              contact@letusto.com
+            </a>
+            으로 문의해 주십시오.
+          </p>
+          <div className="mt-8 border-b border-hairline" />
         </div>
 
         <div id={panelId}>

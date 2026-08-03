@@ -35,108 +35,195 @@ export function CategoryMixDonut() {
 
   return (
     <div>
-      <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[260px_minmax(0,1fr)] md:gap-[clamp(32px,5vw,64px)]">
-        <div className="relative mx-auto w-full max-w-[260px] md:mx-0">
-          <svg
-            viewBox="0 0 200 200"
-            role="img"
-            aria-label={`소싱 카테고리 비중 도넛 차트. ${categories
-              .map((c) => `${c.label} ${c.share}%`)
-              .join(", ")}.`}
-            className="block h-auto w-full overflow-visible"
-          >
-            {segments.map((seg, i) => {
+      {/* 데스크톱 전용 뷰 (768px 이상) */}
+      <div className="hidden md:block">
+        <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[260px_minmax(0,1fr)] md:gap-[clamp(32px,5vw,64px)]">
+          <div className="relative mx-auto w-full max-w-[260px] md:mx-0">
+            <svg
+              viewBox="0 0 200 200"
+              role="img"
+              aria-label={`소싱 카테고리 비중 도넛 차트. ${categories
+                .map((c) => `${c.label} ${c.share}%`)
+                .join(", ")}.`}
+              className="block h-auto w-full overflow-visible"
+            >
+              {segments.map((seg, i) => {
+                const on = i === active;
+                const dash = Math.max(seg.len - GAP, 1);
+                return (
+                  <circle
+                    key={categories[i].label}
+                    cx="100"
+                    cy="100"
+                    r={R}
+                    fill="none"
+                    stroke={on ? "var(--accent)" : "var(--slate)"}
+                    strokeOpacity={on ? 1 : DIM[i]}
+                    strokeWidth={on ? W_ACTIVE : W_BASE}
+                    strokeDasharray={`${dash} ${CIRC - dash}`}
+                    strokeDashoffset={-seg.offset}
+                    transform="rotate(-90 100 100)"
+                    onPointerEnter={() => setActive(i)}
+                    onClick={() => setActive(i)}
+                    className="cursor-pointer transition-[stroke,stroke-opacity,stroke-width] duration-200"
+                  />
+                );
+              })}
+            </svg>
+
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-1.5 px-[18%] text-center"
+            >
+              <StatValue className="text-[34px] leading-none">
+                {current.share}%
+              </StatValue>
+              <span className="body-kr text-xs text-slate">{current.label}</span>
+            </div>
+          </div>
+
+          <ul className="m-0 list-none p-0">
+            {categories.map((cat, i) => {
               const on = i === active;
-              const dash = Math.max(seg.len - GAP, 1);
               return (
-                <circle
-                  key={categories[i].label}
-                  cx="100"
-                  cy="100"
-                  r={R}
-                  fill="none"
-                  stroke={on ? "var(--accent)" : "var(--slate)"}
-                  strokeOpacity={on ? 1 : DIM[i]}
-                  strokeWidth={on ? W_ACTIVE : W_BASE}
-                  strokeDasharray={`${dash} ${CIRC - dash}`}
-                  strokeDashoffset={-seg.offset}
-                  transform="rotate(-90 100 100)"
-                  onPointerEnter={() => setActive(i)}
-                  onClick={() => setActive(i)}
-                  className="cursor-pointer transition-[stroke,stroke-opacity,stroke-width] duration-200"
-                />
+                <li
+                  key={cat.label}
+                  className={i > 0 ? "border-t border-hairline" : ""}
+                >
+                  <button
+                    type="button"
+                    aria-pressed={on}
+                    onPointerEnter={() => setActive(i)}
+                    onFocus={() => setActive(i)}
+                    onClick={() => setActive(i)}
+                    className="flex w-full cursor-pointer items-center gap-3.5 border-0 bg-transparent px-1 py-3.5 text-left transition-colors duration-200 hover:bg-paper-raised"
+                  >
+                    <span
+                      aria-hidden
+                      className="size-2.5 shrink-0 rounded-sm transition-[background-color,opacity] duration-200"
+                      style={{
+                        background: on ? "var(--accent)" : "var(--slate)",
+                        opacity: on ? 1 : DIM[i],
+                      }}
+                    />
+                    <span
+                      className={cn(
+                        "body-kr flex-1 text-[16px]",
+                        on && "font-semibold",
+                      )}
+                    >
+                      {cat.label}
+                    </span>
+                    <span
+                      className={cn(
+                        "tnum text-[16px]",
+                        on ? "font-semibold text-graphite" : "text-slate",
+                      )}
+                    >
+                      {cat.share}%
+                    </span>
+                  </button>
+                </li>
               );
             })}
-          </svg>
-
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-1.5 px-[18%] text-center"
-          >
-            <StatValue className="text-[34px] leading-none">
-              {current.share}%
-            </StatValue>
-            <span className="body-kr text-xs text-slate">{current.label}</span>
-          </div>
+          </ul>
         </div>
 
-        <ul className="m-0 list-none p-0">
+        {/* 높이를 고정해 카테고리를 바꿀 때 레이아웃이 흔들리지 않게 한다. */}
+        <div
+          aria-live="polite"
+          className="mt-8 min-h-[108px] border-t border-hairline pt-6"
+        >
+          <p className="micro-label text-slate">대표 품목 — {current.label}</p>
+          <p className="body-kr mt-3 max-w-[640px] text-[16px]">{current.items}</p>
+        </div>
+
+        <p className="body-kr mt-5 text-[13px] text-slate">{categoryNote}</p>
+      </div>
+
+      {/* 모바일 전용 뷰 (767px 이하) */}
+      <div className="block md:hidden">
+        {/* 가로 스크롤 카테고리 탭 */}
+        <div className="flex gap-2 overflow-x-auto pb-3.5 scrollbar-none whitespace-nowrap border-b border-hairline">
           {categories.map((cat, i) => {
             const on = i === active;
             return (
-              <li
+              <button
                 key={cat.label}
-                className={i > 0 ? "border-t border-hairline" : ""}
+                type="button"
+                onClick={() => setActive(i)}
+                className={cn(
+                  "px-4 py-2 rounded-full border text-[13px] font-bold transition-all duration-150 outline-none select-none cursor-pointer",
+                  on
+                    ? "bg-accent text-white border-accent shadow-sm"
+                    : "bg-paper text-slate border-hairline hover:bg-paper-raised"
+                )}
               >
-                <button
-                  type="button"
-                  aria-pressed={on}
-                  onPointerEnter={() => setActive(i)}
-                  onFocus={() => setActive(i)}
-                  onClick={() => setActive(i)}
-                  className="flex w-full cursor-pointer items-center gap-3.5 border-0 bg-transparent px-1 py-3.5 text-left transition-colors duration-200 hover:bg-paper-raised"
-                >
-                  <span
-                    aria-hidden
-                    className="size-2.5 shrink-0 rounded-sm transition-[background-color,opacity] duration-200"
-                    style={{
-                      background: on ? "var(--accent)" : "var(--slate)",
-                      opacity: on ? 1 : DIM[i],
-                    }}
-                  />
-                  <span
-                    className={cn(
-                      "body-kr flex-1 text-[16px]",
-                      on && "font-semibold",
-                    )}
-                  >
-                    {cat.label}
-                  </span>
-                  <span
-                    className={cn(
-                      "tnum text-[16px]",
-                      on ? "font-semibold text-graphite" : "text-slate",
-                    )}
-                  >
-                    {cat.share}%
-                  </span>
-                </button>
-              </li>
+                {cat.label}
+              </button>
             );
           })}
-        </ul>
-      </div>
+        </div>
 
-      {/* 높이를 고정해 카테고리를 바꿀 때 레이아웃이 흔들리지 않게 한다. */}
-      <div
-        aria-live="polite"
-        className="mt-8 min-h-[108px] border-t border-hairline pt-6"
-      >
-        <p className="micro-label text-slate">대표 품목 — {current.label}</p>
-        <p className="body-kr mt-3 max-w-[640px] text-[16px]">{current.items}</p>
-      </div>
+        {/* 선택된 카테고리 차트 */}
+        <div className="flex flex-col items-center pt-6">
+          <div className="relative w-full max-w-[200px]">
+            <svg
+              viewBox="0 0 200 200"
+              role="img"
+              aria-label={`소싱 카테고리 비중 도넛 차트. ${categories
+                .map((c) => `${c.label} ${c.share}%`)
+                .join(", ")}.`}
+              className="block h-auto w-full overflow-visible"
+            >
+              {segments.map((seg, i) => {
+                const on = i === active;
+                const dash = Math.max(seg.len - GAP, 1);
+                return (
+                  <circle
+                    key={categories[i].label}
+                    cx="100"
+                    cy="100"
+                    r={R}
+                    fill="none"
+                    stroke={on ? "var(--accent)" : "var(--slate)"}
+                    strokeOpacity={on ? 1 : DIM[i]}
+                    strokeWidth={on ? W_ACTIVE : W_BASE}
+                    strokeDasharray={`${dash} ${CIRC - dash}`}
+                    strokeDashoffset={-seg.offset}
+                    transform="rotate(-90 100 100)"
+                    onClick={() => setActive(i)}
+                    className="cursor-pointer transition-[stroke,stroke-opacity,stroke-width] duration-200"
+                  />
+                );
+              })}
+            </svg>
 
-      <p className="body-kr mt-5 text-[13px] text-slate">{categoryNote}</p>
+            {/* 비율/범례 */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-1 px-[15%] text-center"
+            >
+              <StatValue className="text-[28px] font-bold leading-none text-graphite">
+                {current.share}%
+              </StatValue>
+              <span className="body-kr text-[10px] text-slate font-bold">{current.label}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 대표 품목 */}
+        <div className="mt-6 border-t border-hairline pt-5">
+          <p className="micro-label text-slate text-[11px]">대표 품목 — {current.label}</p>
+          <p className="body-kr mt-2 text-[15px] font-semibold text-graphite leading-relaxed">
+            {current.items}
+          </p>
+        </div>
+
+        {/* 설명 문구 */}
+        <p className="body-kr mt-4 text-[12px] text-slate leading-relaxed border-t border-hairline/50 pt-3">
+          {categoryNote}
+        </p>
     </div>
   );
 }
