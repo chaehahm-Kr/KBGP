@@ -121,7 +121,8 @@ function useConditions() {
 
   const updateSelection = (index: number, val: Selection) => {
     setSelections((prev) => {
-      const next = prev.map((v, i) => (i === index ? val : v));
+      const nextVal = prev[index] === val ? null : val;
+      const next = prev.map((v, i) => (i === index ? nextVal : v));
       
       const eligibilityResponses = eligibilityConditions.map((item, i) => ({
         itemKey: item.key,
