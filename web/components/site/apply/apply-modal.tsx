@@ -274,7 +274,7 @@ export function ApplyModal({
             접수번호{" "}
             <span className="tnum font-semibold text-graphite">{status.id}</span>{" "}
             로 등록했습니다. 상품 검토를 거쳐 담당자가 직접 연락드립니다. 영업일
-            1일 내 회신합니다.
+            3일 내 회신합니다.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <button
