@@ -219,7 +219,15 @@ export function ApplyModal({
         return;
       }
 
-      if (json.ok) setStatus({ kind: "done", id: json.id });
+      if (json.ok) {
+        setStatus({ kind: "done", id: json.id });
+        try {
+          sessionStorage.removeItem("kbeauty_eligibility_responses");
+          window.dispatchEvent(new Event("kbeauty_eligibility_reset"));
+        } catch (e) {
+          console.error("Failed to clear eligibility responses on success:", e);
+        }
+      }
       else setStatus({ kind: "error", errors: json.errors });
     } catch {
       setStatus({

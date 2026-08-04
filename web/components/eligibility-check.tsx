@@ -112,6 +112,15 @@ function useConditions() {
     } catch (e) {
       console.error("Failed to load eligibility state", e);
     }
+
+    const handleReset = () => {
+      setSelections(Array(TOTAL).fill(null));
+    };
+
+    window.addEventListener("kbeauty_eligibility_reset", handleReset);
+    return () => {
+      window.removeEventListener("kbeauty_eligibility_reset", handleReset);
+    };
   }, []);
 
   const checkedCount = selections.filter((v) => v !== null).length;
