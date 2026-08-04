@@ -231,7 +231,7 @@ export const eligibilityConditions: EligibilityCondition[] = [
     description: "미국 진출에 필요한 성분, 인증, 등록, 라벨링 및 통관 요건을 확인하고 필요한 보완 절차에 협력할 수 있습니다."
   },
   {
-    key: "initial_test_stock",
+    key: "initial_test_quantity",
     number: 3,
     title: "초기 테스트 물량 공급",
     description: "온·오프라인 실제 판매 테스트를 위한 제품별 약 300개의 초기 물량을 공급할 수 있습니다."
@@ -249,7 +249,7 @@ export const eligibilityConditions: EligibilityCondition[] = [
     description: "시장 테스트 이후 본격적인 판매 확대를 위해, 상호 협의된 기간과 범위 내에서 마케팅 활동에 참여할 의향이 있습니다."
   },
   {
-    key: "sales_content_collaboration",
+    key: "sales_content_support",
     number: 6,
     title: "판매 콘텐츠 협력",
     description: "제품 이미지, 영상, 사용 방법, 상세 정보 등 판매에 필요한 콘텐츠를 제공하거나 제작에 협력할 수 있습니다."
