@@ -54,6 +54,112 @@ export function ApplyModal({
   const [files, setFiles] = useState<File[][]>([[]]);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
 
+  // 국가번호 및 연락처 상태
+  const [countryCode, setCountryCode] = useState("+82");
+  const [rawPhone, setRawPhone] = useState("");
+
+  // 이메일 인증 상태
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [verificationSent, setVerificationSent] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [verificationTimer, setVerificationTimer] = useState(300); // 5분
+  const [verificationLoading, setVerificationLoading] = useState(false);
+  const [verificationError, setVerificationError] = useState("");
+  const [verificationSuccessMsg, setVerificationSuccessMsg] = useState("");
+
+  // 연락처 결합 동기화
+  useEffect(() => {
+    if (rawPhone.trim() === "") {
+      setData((prev) => ({ ...prev, phone: "" }));
+    } else {
+      setData((prev) => ({ ...prev, phone: `${countryCode} ${rawPhone.trim()}` }));
+    }
+  }, [countryCode, rawPhone]);
+
+  // 이메일 인증 타이머 작동
+  useEffect(() => {
+    if (!verificationSent || emailVerified || verificationTimer <= 0) return;
+    const interval = setInterval(() => {
+      setVerificationTimer((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [verificationSent, emailVerified, verificationTimer]);
+
+  // 이메일 주소 수정 시 인증 초기화
+  const handleEmailChange = (newEmail: string) => {
+    setData((prev) => ({ ...prev, email: newEmail }));
+    setEmailVerified(false);
+    setVerificationSent(false);
+    setVerificationCode("");
+    setVerificationError("");
+    setVerificationSuccessMsg("");
+  };
+
+  // 인증번호 발송 요청
+  const sendVerificationCode = async () => {
+    const emailToVerify = data.email.trim();
+    if (!emailToVerify || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailToVerify)) {
+      setVerificationError("올바른 이메일 주소를 입력해 주십시오.");
+      return;
+    }
+    setVerificationLoading(true);
+    setVerificationError("");
+    setVerificationSuccessMsg("");
+    try {
+      const res = await fetch("/api/applications/send-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: emailToVerify }),
+      });
+      const result = await res.json();
+      if (res.ok && result.ok) {
+        setVerificationSent(true);
+        setVerificationTimer(300);
+        setVerificationSuccessMsg("인증번호가 이메일로 발송되었습니다. 확인해 주세요.");
+      } else {
+        setVerificationError(result.errors?.[0] || "인증번호 발송에 실패했습니다.");
+      }
+    } catch (err) {
+      setVerificationError("인증 서버 통신에 실패했습니다.");
+    } finally {
+      setVerificationLoading(false);
+    }
+  };
+
+  // 인증번호 확인 요청
+  const confirmVerificationCode = async () => {
+    if (verificationTimer <= 0) {
+      setVerificationError("인증 시간이 만료되었습니다. 다시 전송해 주세요.");
+      return;
+    }
+    const codeToVerify = verificationCode.trim();
+    if (!codeToVerify) {
+      setVerificationError("인증 번호를 입력해 주십시오.");
+      return;
+    }
+    setVerificationLoading(true);
+    setVerificationError("");
+    setVerificationSuccessMsg("");
+    try {
+      const res = await fetch("/api/applications/verify-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: data.email, code: codeToVerify }),
+      });
+      const result = await res.json();
+      if (res.ok && result.ok) {
+        setEmailVerified(true);
+        setVerificationSuccessMsg("이메일 인증이 성공적으로 완료되었습니다.");
+      } else {
+        setVerificationError(result.errors?.[0] || "인증 번호가 일치하지 않습니다.");
+      }
+    } catch (err) {
+      setVerificationError("인증 서버 통신에 실패했습니다.");
+    } finally {
+      setVerificationLoading(false);
+    }
+  };
+
   // 네이티브 dialog 를 쓰면 포커스 트랩과 Esc, 백드롭을 브라우저가 처리한다.
   useEffect(() => {
     const el = dialogRef.current;
@@ -139,6 +245,10 @@ export function ApplyModal({
       ...data.products.flatMap((p, i): [boolean, string][] => [
         [!p.name.trim(), `p-name-${i}`],
         [!p.category.trim(), `p-cat-${i}`],
+        [!p.packageWidth.trim(), `p-width-${i}`],
+        [!p.packageDepth.trim(), `p-depth-${i}`],
+        [!p.packageHeight.trim(), `p-height-${i}`],
+        [!p.packageWeight.trim(), `p-weight-${i}`],
       ]),
       [!data.agreePrivacy, "agreePrivacy"],
     ];
@@ -170,7 +280,14 @@ export function ApplyModal({
       eligibilityResponses,
     };
 
-    const errors = validateApplication(payloadData);
+    const errors: string[] = [];
+    if (!emailVerified) {
+      errors.push("이메일 인증을 완료해 주십시오.");
+    }
+
+    const formErrors = validateApplication(payloadData);
+    errors.push(...formErrors);
+
     // 총량은 전송 전에 반드시 막는다. 한도를 넘긴 요청은 함수에 닿지 못하고
     // 플랫폼이 413 으로 끊어, 사용자에게 원인이 보이지 않는다.
     const totalError = validateTotalSize(totalBytes);
@@ -330,6 +447,7 @@ export function ApplyModal({
                   id="businessNumber"
                   required
                   inputMode="numeric"
+                  placeholder="대시(-) 없이 입력해 주세요"
                   className={field}
                   value={data.businessNumber}
                   onChange={(e) => set("businessNumber", e.target.value)}
@@ -349,7 +467,7 @@ export function ApplyModal({
               </div>
               <div>
                 <label className={labelCls} htmlFor="brandName">
-                  브랜드명
+                  브랜드명 <span className="text-slate text-[12px] font-normal">(대소문자 구분 필수)</span>
                 </label>
                 <input
                   id="brandName"
@@ -401,30 +519,113 @@ export function ApplyModal({
                   onChange={(e) => set("contactTitle", e.target.value)}
                 />
               </div>
-              <div>
+              <div className="sm:col-span-2">
                 <label className={labelCls} htmlFor="email">
                   이메일 <span className="text-warn">*</span>
                 </label>
-                <input
-                  id="email"
-                  type="email"
-                  required
-                  className={field}
-                  value={data.email}
-                  onChange={(e) => set("email", e.target.value)}
-                />
+                <div className="mt-2 flex gap-2">
+                  <input
+                    id="email"
+                    type="email"
+                    required
+                    disabled={emailVerified}
+                    className="w-full rounded-lg border border-hairline bg-paper px-4 py-3 text-[15px] text-graphite disabled:bg-paper-raised"
+                    value={data.email}
+                    onChange={(e) => handleEmailChange(e.target.value)}
+                  />
+                  {!emailVerified ? (
+                    <button
+                      type="button"
+                      disabled={verificationLoading}
+                      onClick={sendVerificationCode}
+                      className="cursor-pointer rounded-lg bg-ink px-5 py-3 text-[13px] font-semibold text-ivory hover:bg-graphite disabled:opacity-60 min-w-[100px]"
+                    >
+                      {verificationLoading ? "발송 중…" : verificationSent ? "재전송" : "이메일 인증"}
+                    </button>
+                  ) : (
+                    <span className="flex items-center justify-center rounded-lg bg-green-50 px-4 text-[13px] font-bold text-green-700 border border-green-200 min-w-[100px]">
+                      인증 완료
+                    </span>
+                  )}
+                </div>
+
+                {/* 인증 번호 입력 영역 */}
+                {verificationSent && !emailVerified && (
+                  <div className="mt-3 rounded-lg border border-hairline bg-paper-raised p-4">
+                    <p className="body-kr m-0 mb-2 text-[13px] text-slate">
+                      전송된 6자리 인증 번호를 입력해 주세요.
+                    </p>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="인증 번호 6자리"
+                        className="w-full rounded-lg border border-hairline bg-paper px-3 py-2 text-[14px] text-graphite"
+                        value={verificationCode}
+                        onChange={(e) => setVerificationCode(e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        disabled={verificationLoading}
+                        onClick={confirmVerificationCode}
+                        className="cursor-pointer rounded-lg bg-accent px-5 py-2 text-[13px] font-semibold text-white hover:bg-accent-ink disabled:opacity-60 min-w-[80px]"
+                      >
+                        {verificationLoading ? "확인 중…" : "확인"}
+                      </button>
+                    </div>
+                    <div className="mt-2 flex items-center justify-between text-[12px]">
+                      <span className="tnum font-mono font-semibold text-warn">
+                        남은 시간: {Math.floor(verificationTimer / 60)}:
+                        {String(verificationTimer % 60).padStart(2, "0")}
+                      </span>
+                      {verificationTimer <= 0 && (
+                        <span className="text-warn font-semibold">시간 초과. 다시 시도해 주세요.</span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* 인증 상태 피드백 메시지 */}
+                {verificationError && (
+                  <p className="body-kr mt-1.5 mb-0 text-[13px] text-warn font-semibold">
+                    {verificationError}
+                  </p>
+                )}
+                {verificationSuccessMsg && !verificationError && (
+                  <p className="body-kr mt-1.5 mb-0 text-[13px] text-green-600 font-semibold">
+                    {verificationSuccessMsg}
+                  </p>
+                )}
               </div>
               <div>
                 <label className={labelCls} htmlFor="phone">
                   연락처 <span className="text-warn">*</span>
                 </label>
-                <input
-                  id="phone"
-                  required
-                  className={field}
-                  value={data.phone}
-                  onChange={(e) => set("phone", e.target.value)}
-                />
+                <div className="mt-2 flex gap-2">
+                  <select
+                    className="rounded-lg border border-hairline bg-paper px-3 py-3 text-[15px] text-graphite appearance-none min-w-[90px]"
+                    value={countryCode}
+                    onChange={(e) => setCountryCode(e.target.value)}
+                  >
+                    <option value="+82">Korea (+82)</option>
+                    <option value="+1">USA (+1)</option>
+                    <option value="+81">Japan (+81)</option>
+                    <option value="+86">China (+86)</option>
+                    <option value="+44">UK (+44)</option>
+                    <option value="+49">Germany (+49)</option>
+                    <option value="+33">France (+33)</option>
+                    <option value="+61">Australia (+61)</option>
+                    <option value="+65">Singapore (+65)</option>
+                    <option value="+84">Vietnam (+84)</option>
+                  </select>
+                  <input
+                    id="phone"
+                    required
+                    placeholder="연락처 번호 입력"
+                    className="w-full rounded-lg border border-hairline bg-paper px-4 py-3 text-[15px] text-graphite"
+                    value={rawPhone}
+                    onChange={(e) => setRawPhone(e.target.value)}
+                  />
+                </div>
               </div>
             </div>
           </fieldset>
@@ -518,35 +719,99 @@ export function ApplyModal({
                         }
                       />
                     </div>
-                    <div>
-                      <label className={labelCls} htmlFor={`p-volume-${index}`}>
-                        상품 포장 정보: 부피 (cm)
-                      </label>
-                      <input
-                        id={`p-volume-${index}`}
-                        placeholder="예: 10x5x3"
-                        className={field}
-                        value={product.packageVolume}
-                        onChange={(e) =>
-                          setProduct(index, { packageVolume: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div>
-                      <label className={labelCls} htmlFor={`p-weight-${index}`}>
-                        상품 포장 정보: 무게 (g)
-                      </label>
-                      <input
-                        id={`p-weight-${index}`}
-                        placeholder="예: 150"
-                        className={field}
-                        value={product.packageWeight}
-                        onChange={(e) =>
-                          setProduct(index, { packageWeight: e.target.value })
-                        }
-                      />
-                    </div>
+                    {/* 상품 포장 정보: 부피(규격) */}
                     <div className="sm:col-span-2">
+                      <label className={labelCls}>
+                        상품 포장 정보: 규격 <span className="text-warn">*</span>
+                      </label>
+                      <div className="mt-2 flex items-center gap-2">
+                        <input
+                          id={`p-width-${index}`}
+                          required
+                          type="number"
+                          placeholder="가로"
+                          className="w-full rounded-lg border border-hairline bg-paper px-3 py-3 text-[15px] text-graphite [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          value={product.packageWidth}
+                          onChange={(e) =>
+                            setProduct(index, { packageWidth: e.target.value })
+                          }
+                        />
+                        <span className="text-slate text-[13px] font-semibold">x</span>
+                        <input
+                          id={`p-depth-${index}`}
+                          required
+                          type="number"
+                          placeholder="세로"
+                          className="w-full rounded-lg border border-hairline bg-paper px-3 py-3 text-[15px] text-graphite [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          value={product.packageDepth}
+                          onChange={(e) =>
+                            setProduct(index, { packageDepth: e.target.value })
+                          }
+                        />
+                        <span className="text-slate text-[13px] font-semibold">x</span>
+                        <input
+                          id={`p-height-${index}`}
+                          required
+                          type="number"
+                          placeholder="높이"
+                          className="w-full rounded-lg border border-hairline bg-paper px-3 py-3 text-[15px] text-graphite [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          value={product.packageHeight}
+                          onChange={(e) =>
+                            setProduct(index, { packageHeight: e.target.value })
+                          }
+                        />
+                        <select
+                          id={`p-dimunit-${index}`}
+                          required
+                          className="rounded-lg border border-hairline bg-paper px-3 py-3 text-[15px] text-graphite appearance-none min-w-[90px]"
+                          value={product.dimensionUnit}
+                          onChange={(e) =>
+                            setProduct(index, { dimensionUnit: e.target.value as any })
+                          }
+                        >
+                          <option value="">단위 선택</option>
+                          <option value="cm">cm</option>
+                          <option value="inch">inch</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* 상품 포장 정보: 무게 */}
+                    <div className="sm:col-span-2">
+                      <label className={labelCls} htmlFor={`p-weight-${index}`}>
+                        상품 포장 정보: 무게 <span className="text-warn">*</span>
+                      </label>
+                      <div className="mt-2 flex gap-2">
+                        <input
+                          id={`p-weight-${index}`}
+                          required
+                          type="number"
+                          placeholder="무게"
+                          className="w-full rounded-lg border border-hairline bg-paper px-3 py-3 text-[15px] text-graphite [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          value={product.packageWeight}
+                          onChange={(e) =>
+                            setProduct(index, { packageWeight: e.target.value })
+                          }
+                        />
+                        <select
+                          id={`p-weightunit-${index}`}
+                          required
+                          className="rounded-lg border border-hairline bg-paper px-3 py-3 text-[15px] text-graphite appearance-none min-w-[90px]"
+                          value={product.weightUnit}
+                          onChange={(e) =>
+                            setProduct(index, { weightUnit: e.target.value as any })
+                          }
+                        >
+                          <option value="">단위 선택</option>
+                          <option value="g">g</option>
+                          <option value="kg">kg</option>
+                          <option value="lb">lb</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* 생산 및 리드타임 */}
+                    <div>
                       <label className={labelCls} htmlFor={`p-cap-${index}`}>
                         월 생산 가능 수량
                       </label>
@@ -557,6 +822,20 @@ export function ApplyModal({
                         value={product.monthlyCapacity}
                         onChange={(e) =>
                           setProduct(index, { monthlyCapacity: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls} htmlFor={`p-leadtime-${index}`}>
+                        대략적인 리드 타임 (Lead Time)
+                      </label>
+                      <input
+                        id={`p-leadtime-${index}`}
+                        placeholder="예: 30일"
+                        className={field}
+                        value={product.leadTime}
+                        onChange={(e) =>
+                          setProduct(index, { leadTime: e.target.value })
                         }
                       />
                     </div>

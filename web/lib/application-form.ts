@@ -26,16 +26,21 @@ export const ACCEPTED_MIME = [
 export const ACCEPT_ATTR = ".jpg,.jpeg,.png,.webp,.pdf";
 
 /** 카테고리 선택지는 소싱 섹션과 동일한 데이터에서 가져온다. */
-export const productCategoryOptions = categories.map((c) => c.label);
+export const productCategoryOptions = [...categories.map((c) => c.label), "기타"];
 
 export type ProductInput = {
   name: string;
   category: string;
   priceKrw: string;
   supplyPriceUsd: string;
-  packageVolume: string;
+  packageWidth: string;
+  packageDepth: string;
+  packageHeight: string;
+  dimensionUnit: "" | "cm" | "inch";
   packageWeight: string;
+  weightUnit: "" | "kg" | "g" | "lb";
   monthlyCapacity: string;
+  leadTime: string;
   note: string;
 };
 
@@ -64,9 +69,14 @@ export const emptyProduct = (): ProductInput => ({
   category: "",
   priceKrw: "",
   supplyPriceUsd: "",
-  packageVolume: "",
+  packageWidth: "",
+  packageDepth: "",
+  packageHeight: "",
+  dimensionUnit: "",
   packageWeight: "",
+  weightUnit: "",
   monthlyCapacity: "",
+  leadTime: "",
   note: "",
 });
 
@@ -114,6 +124,19 @@ export function validateApplication(input: ApplicationInput): string[] {
     if (!p.category.trim()) errors.push(`${label}: 카테고리를 선택해 주십시오.`);
     else if (!productCategoryOptions.includes(p.category))
       errors.push(`${label}: 카테고리 값이 올바르지 않습니다.`);
+
+    if (!p.packageWidth.trim() || !p.packageDepth.trim() || !p.packageHeight.trim()) {
+      errors.push(`${label}: 상품 포장 정보(가로·세로·높이)를 모두 입력해 주십시오.`);
+    }
+    if (!p.dimensionUnit) {
+      errors.push(`${label}: 상품 포장 정보의 크기 단위(cm 또는 inch)를 선택해 주십시오.`);
+    }
+    if (!p.packageWeight.trim()) {
+      errors.push(`${label}: 상품 포장 정보(무게)를 입력해 주십시오.`);
+    }
+    if (!p.weightUnit) {
+      errors.push(`${label}: 상품 포장 정보의 무게 단위(kg, g 또는 lb)를 선택해 주십시오.`);
+    }
   });
 
   if (!input.agreePrivacy)
