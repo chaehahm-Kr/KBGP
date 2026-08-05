@@ -101,6 +101,33 @@ function useConditions() {
 
   useEffect(() => {
     setIsMounted(true);
+
+    // 새로고침(F5/Ctrl+F5) 및 주소창 재진입 시 자가진단 내역을 비우도록 감지
+    if (typeof window !== "undefined") {
+      try {
+        let isFreshLoad = false;
+        
+        const navEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
+        if (navEntries.length > 0) {
+          const type = navEntries[0].type;
+          if (type === "reload" || type === "navigate") {
+            isFreshLoad = true;
+          }
+        } else {
+          const navType = performance.navigation.type;
+          if (navType === 0 || navType === 1) { // 0: navigate, 1: reload
+            isFreshLoad = true;
+          }
+        }
+
+        if (isFreshLoad) {
+          sessionStorage.removeItem("kbeauty_eligibility_responses");
+        }
+      } catch (e) {
+        console.error("Failed to check navigation type:", e);
+      }
+    }
+
     try {
       const saved = sessionStorage.getItem("kbeauty_eligibility_responses");
       if (saved) {
