@@ -452,6 +452,9 @@ export function ApplyModal({
                   value={data.businessNumber}
                   onChange={(e) => set("businessNumber", e.target.value)}
                 />
+                <p className="body-kr mt-1.5 text-[12px] text-slate/85 leading-relaxed">
+                  ※ 추후 파트너 포털(Brand SaaS) 계정 오픈 시 본인 확인 검증 도구로 사용되니 정확히 입력해 주십시오.
+                </p>
               </div>
               <div className="sm:col-span-2">
                 <label className={labelCls} htmlFor="companyAddress">
@@ -548,6 +551,9 @@ export function ApplyModal({
                     </span>
                   )}
                 </div>
+                <p className="body-kr mt-1.5 text-[12px] text-slate/85 leading-relaxed">
+                  ※ 추후 파트너 포털(Brand SaaS) 계정 로그인 및 본인 확인 검증 도구로 사용됩니다.
+                </p>
 
                 {/* 인증 번호 입력 영역 */}
                 {verificationSent && !emailVerified && (
@@ -930,6 +936,15 @@ export function ApplyModal({
 
           {/* 동의 + 전송 */}
           <div className="mt-10 border-t border-hairline pt-8">
+            <div className="mb-6 rounded-lg bg-paper-raised border border-hairline p-5">
+              <p className="body-kr m-0 text-[14px] font-bold text-graphite leading-relaxed flex items-center gap-1.5">
+                💡 중요 안내
+              </p>
+              <p className="body-kr m-0 mt-2 text-[13px] text-slate leading-relaxed">
+                신청서에 입력하신 <span className="font-semibold text-graphite">사업자등록번호</span>와 <span className="font-semibold text-graphite">이메일 주소</span>는 추후 파트너사 전용 포털(Brand SaaS 포털 계정 오픈)의 가입 및 검증 도구로 사용되오니 잘 기억해 주시기 바랍니다.
+              </p>
+            </div>
+
             <div className="flex items-start gap-3">
               <input
                 type="checkbox"
