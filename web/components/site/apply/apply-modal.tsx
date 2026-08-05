@@ -412,13 +412,6 @@ export function ApplyModal({
             >
               확인
             </button>
-            <button
-              type="button"
-              onClick={reset}
-              className="cursor-pointer rounded-full border border-hairline bg-transparent px-8 py-4 text-[15px] font-semibold text-graphite"
-            >
-              다른 브랜드로 추가 신청
-            </button>
           </div>
         </div>
       ) : (
