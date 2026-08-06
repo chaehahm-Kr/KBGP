@@ -26,7 +26,16 @@ export const ACCEPTED_MIME = [
 export const ACCEPT_ATTR = ".jpg,.jpeg,.png,.webp,.pdf";
 
 /** 카테고리 선택지는 소싱 섹션과 동일한 데이터에서 가져온다. */
-export const productCategoryOptions = [...categories.map((c) => c.label), "기타"];
+export const productCategoryOptions = [
+  "스킨케어",
+  "헤어케어",
+  "메이크업",
+  "바디케어",
+  "퍼스널케어",
+  "뷰티툴",
+  "세트/기획",
+  "기타"
+];
 
 export type ProductInput = {
   name: string;
