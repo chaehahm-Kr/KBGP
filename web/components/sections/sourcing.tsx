@@ -5,7 +5,7 @@ export function Sourcing() {
   return (
     <Section>
       <SectionHeading label="Sourcing — Category Mix">
-        KBG PROGRAM 소싱 포트폴리오
+        KBGP 소싱 포트폴리오
       </SectionHeading>
 
       <div className="grid grid-cols-1 gap-[clamp(24px,4vw,64px)] pt-10 md:grid-cols-[clamp(0px,22vw,320px)_minmax(0,1fr)]">

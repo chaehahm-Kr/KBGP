@@ -79,11 +79,11 @@ export const phases = [
     phase: "Phase 01",
     latin: "Test",
     title: "테스트 입점",
-    body: "오프라인 10개 매장에 240개, Amazon에 60개. 대량 발주 없이 실제 수요를 확인합니다.",
+    body: "제품별로 오프라인 10개 파트너 매장 테스트 판매용 약 240개와 Amazon 판매·고객 반응 검증용 약 60개를 기준으로 시작합니다.",
     rows: [
-      { label: "오프라인", value: "240", numeric: true },
-      { label: "온라인 (Amazon)", value: "60", numeric: true },
-      { label: "진열 방식", value: "Store-in-a-Store", numeric: false },
+      { label: "오프라인 테스트 판매", value: "약 240개", numeric: false },
+      { label: "Amazon 판매 테스트", value: "약 60개", numeric: false },
+      { label: "총 테스트 물량", value: "약 300개", numeric: false },
     ],
   },
   {
@@ -103,7 +103,7 @@ export const policies = [
   {
     fear: "선금을 보낸 뒤 연락이 끊긴다",
     policy: "First Order Protection",
-    body: "첫 거래의 위험을 브랜드가 혼자 부담하지 않습니다. 조건은 계약서에 명문화됩니다.",
+    body: "초도 물량 리스크를 완화할 수 있도록 상품 교체와 구성 조정 조건을 계약서에 명문화합니다.",
   },
   {
     fear: "병행수입으로 가격이 무너진다",
@@ -113,7 +113,7 @@ export const policies = [
   {
     fear: "현지 매장과 연결될 방법이 없다",
     policy: "Store-in-a-Store 진열",
-    body: "Letusto가 직접 운영하는 매장 안에 브랜드 전용 구획을 배정합니다.",
+    body: "Letusto의 파트너 Beauty Supply 매장 내에 K-Beauty 전용 구획을 조성하고, 상품 구성·진열·판매 데이터 관리를 함께 운영합니다.",
   },
   {
     fear: "실제 판매량을 알 수 없다",
@@ -125,50 +125,50 @@ export const policies = [
 export const processSteps = [
   {
     title: "신청 접수",
-    body: "준비 조건 확인 후 신청서 제출",
+    body: "신청서 제출 및 기본 서류 검토",
     phase: "Phase 01 — Test",
-    brand: "신청서 · 제품 정보 · 상표 등록 여부",
-    letusto: "1차 서류 검토",
+    brand: "신청서 제출 · 회사 및 제품 정보 · 상표권 및 기존 판매 채널 정보 제공",
+    letusto: "기본 준비 조건 및 서류 검토",
     duration: "즉시",
   },
   {
     title: "상품 · 규격 검토",
-    body: "카테고리 적합성, 현지 표기 및 인증 요건 확인",
+    body: "카테고리 적합성, 미국 규정 및 패키지 경쟁력 검토",
     phase: "Phase 01 — Test",
-    brand: "성분표 · 효능 주장 문구 · 사양서",
-    letusto: "화장품 / OTC 분류 판단",
+    brand: "제품 상세 정보 · 성분표 또는 사양서 · 공급가 · 패키지 및 물류 정보 · 필요 시 샘플 제출",
+    letusto: "카테고리 적합성 · 미국 규정 · 가격 및 패키지 경쟁력 검토",
     duration: "1~2주",
   },
   {
     title: "담당자 미팅",
-    body: "공급 조건 · 일정 · First Order Protection 범위 협의",
+    body: "제품 차별성, 유통 현황, 진출 목표 확인 및 테스트 조건 협의",
     phase: "Phase 01 — Test",
-    brand: "공급가 · 물량 계획",
-    letusto: "조건 제시 및 계약 초안",
+    brand: "미국 진출 목표 및 기존 유통 현황 공유 · 테스트 조건 협의",
+    letusto: "제품 차별성 확인 및 테스트 조건 조율 · 필요 시 보완자료 요청",
     duration: "1~2주",
   },
   {
-    title: "테스트 입점",
-    body: "오프라인 240 + Amazon 60, Store-in-a-Store 진열",
+    title: "분석 및 테스트 계약",
+    body: "시장·경쟁사·가격·규정 분석 결과를 공유하고, 최종 선정된 제품에 한해 테스트 파트너십 계약을 진행합니다.",
     phase: "Phase 01 — Test",
-    brand: "테스트 물량 300개 공급",
-    letusto: "매장 선정 · 진열 · 통관 · Amazon 운영",
+    brand: "테스트 파트너십 계약 및 테스트 물량 공급",
+    letusto: "시장/경쟁사 분석 리포트 공유 및 계약 절차 진행",
     duration: "약 90일",
   },
   {
-    title: "실판매 데이터 리뷰",
-    body: "주간 · 월간 판매 데이터 공유 및 검증",
+    title: "테스트 런칭 및 데이터 리뷰",
+    body: "오프라인 10개 파트너 매장과 Amazon에서 테스트 판매를 진행하고, 매장별·SKU별 판매 데이터와 고객 반응을 검토합니다.",
     phase: "Phase 01 — Test",
-    brand: "리포트 확인 담당자 지정",
-    letusto: "판매량 · 판매 속도 · 가격 반응 리포트",
+    brand: "매장별/SKU별 리포트 및 고객 반응 확인",
+    letusto: "오프라인 10개 매장 진열, 아마존 런칭 및 판매 분석 리포트 제공",
     duration: "월 1회",
   },
   {
     title: "본 파트너십",
-    body: "상권 보호 정책 아래 정식 유통 확대",
+    body: "테스트 성과, 공급 안정성 및 개선사항 이행 여부를 종합적으로 평가한 후 본 파트너십 전환과 발주·매장 확대를 결정합니다.",
     phase: "Phase 02 — Partnership",
-    brand: "독점 유통권 협의 · USPTO 상표",
-    letusto: "채널 확대 · 가격 정책 관리",
+    brand: "성과 평가 검토 및 정식 독점 유통 협의",
+    letusto: "정식 발주 및 오프라인 매장/유통 채널 확대",
     duration: "전체 4~6개월",
   },
 ];
@@ -211,7 +211,7 @@ export const categories = [
 ];
 
 export const categoryNote =
-  "위 카테고리에 명시적으로 해당하지 않더라도, 반복 구매를 이끌어낼 수 있는 상품이라면 별도로 검토 가능합니다.";
+  "위 비율은 초기 소싱 포트폴리오의 목표 구성으로, 시장 반응과 파트너 매장 수요에 따라 조정될 수 있습니다. 위 카테고리에 명시적으로 해당하지 않더라도, 반복 구매를 이끌어낼 수 있는 상품이라면 별도로 검토 가능합니다.";
 
 export interface EligibilityCondition {
   key: string;
@@ -243,7 +243,7 @@ export const eligibilityConditions: EligibilityCondition[] = [
     key: "north_america_distribution",
     number: 4,
     title: "북미 유통 권한 협의",
-    description: "테스트 결과와 협력 조건이 충족될 경우, 기존 계약과 충돌하지 않는 범위에서 북미 유통 권한을 협의할 수 있습니다."
+    description: "기존 북미 유통 계약과 판매 채널의 충돌 여부를 확인할 수 있어야 하며, 테스트 결과와 협력 조건이 충족될 경우 Letusto 채널의 안정적인 공급과 북미 유통 권한을 상호 협의할 수 있습니다."
   },
   {
     key: "joint_marketing",

@@ -218,6 +218,9 @@ export function EligibilitySection() {
     <div className="grid grid-cols-1 gap-[clamp(24px,4vw,64px)] pt-10 md:grid-cols-[clamp(0px,22vw,320px)_minmax(0,1fr)]">
       <div>
         <p className="body-kr text-[17px] text-slate leading-relaxed">
+          한국에서 제품을 생산하는 제조업체, 자체 브랜드를 운영하는 브랜드사, 또는 해당 브랜드의 정식·독점 공급 권한을 보유한 유통업체가 신청할 수 있습니다. 기본 준비 조건과 제품 적합성을 검토한 후 참여 여부를 결정합니다.
+        </p>
+        <p className="body-kr text-[15px] text-slate/85 leading-relaxed mt-4">
           아래 항목은 K-Beauty Growth Program을 원활하게 진행하기 위한 기본 준비 사항입니다. 현재 모든 준비가 완료되지 않았더라도, 향후 보완 및 협력이 가능한 경우 프로그램 참여를 함께 검토할 수 있습니다.
         </p>
         <div className="mt-7 border-t border-hairline pt-6">

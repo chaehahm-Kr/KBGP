@@ -27,7 +27,7 @@ export const isLeaf = (entry: NavEntry): entry is NavLeaf =>
   !("items" in entry);
 
 export const kbgProgramGroup: NavGroup = {
-  label: "KBG Program",
+  label: "KBGP",
   id: "kbg-program-menu",
   items: [
     {
