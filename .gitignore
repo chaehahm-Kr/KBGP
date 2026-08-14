@@ -13,6 +13,7 @@ Thumbs.db
 
 .vercel
 .env*
+.mcp.json*
 
 # 접수 원본이 루트에 생기는 경우 대비 (개인정보 포함)
 .data/
