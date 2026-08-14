@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/site/nav/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
 import { Section, pillInkCompact } from "@/components/ui";
 import { InsightsListClient } from "@/components/site/insights/insights-list-client";
+import { InsightsImage } from "@/components/site/insights/insights-image";
 
 export const metadata: Metadata = {
   title: "인사이트 (Insights) — K Select Network",
@@ -146,17 +147,11 @@ export default async function InsightsPage() {
                 {/* 썸네일 이미지 (7컬럼) */}
                 <div className="lg:col-span-7 overflow-hidden rounded bg-paper-raised aspect-[16/10]">
                   <Link href={`/insights/${featuredArticle.slug}`} className="block h-full w-full relative group">
-                    {featuredArticle.hero_image ? (
-                      <img
-                        src={featuredArticle.hero_image}
-                        alt={featuredArticle.title}
-                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-103"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-slate">
-                        No Image Available
-                      </div>
-                    )}
+                    <InsightsImage
+                      src={featuredArticle.hero_image}
+                      alt={featuredArticle.title}
+                      className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-103"
+                    />
                   </Link>
                 </div>
 

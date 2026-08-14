@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/site/nav/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
 import { Section, pillAccent } from "@/components/ui";
+import { InsightsImage } from "@/components/site/insights/insights-image";
 
 // 폴백용 상세 데이터
 const FALLBACK_DETAILS: Record<string, any> = {
@@ -280,15 +281,13 @@ export default async function InsightDetailPage({ params }: Props) {
           </div>
 
           {/* 대표 히어로 이미지 */}
-          {article.hero_image && (
-            <div className="mt-12 overflow-hidden rounded bg-paper-raised aspect-[16/9] w-full">
-              <img
-                src={article.hero_image}
-                alt={article.title}
-                className="h-full w-full object-cover"
-              />
-            </div>
-          )}
+          <div className="mt-12 overflow-hidden rounded bg-paper-raised aspect-[16/9] w-full">
+            <InsightsImage
+              src={article.hero_image}
+              alt={article.title}
+              className="h-full w-full object-cover"
+            />
+          </div>
 
           {/* 본문 콘텐츠 블록 렌더러 (Content Block System) */}
           <div className="mt-12 pr-0 sm:pr-4">

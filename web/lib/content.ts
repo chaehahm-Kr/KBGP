@@ -9,7 +9,7 @@ export const meetingHref = `mailto:${contact.email}?subject=${encodeURIComponent
   contact.meetingSubject,
 )}`;
 
-export const cohortStatus = "2026 코호트 접수중";
+export const cohortStatus = "2026 파트너 모집 중";
 
 export const navItems = [
   { label: "Program", href: "#program" },

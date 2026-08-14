@@ -62,9 +62,9 @@ export const kbgProgramGroup: NavGroup = {
 export const primaryNav: NavEntry[] = [
   kbgProgramGroup,
   { label: "Letusto", href: "/#letusto" },
-  { label: "Insights", href: "/insights" },
   { label: "FAQ", href: "/#faq" },
   { label: "Export Voucher", href: "/export-voucher" },
+  { label: "Insights", href: "/insights" },
 ];
 
 export const primaryCta = { label: "파트너쉽 신청하기", href: "/#eligibility" };

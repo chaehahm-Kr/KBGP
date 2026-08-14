@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { InsightsImage } from "./insights-image";
 
 interface Article {
   id: string;
@@ -116,18 +117,11 @@ export function InsightsListClient({ articles }: InsightsListClientProps) {
               >
                 {/* 썸네일 이미지 */}
                 <Link href={`/insights/${article.slug}`} className="relative w-full overflow-hidden rounded bg-paper-raised aspect-video">
-                  {article.hero_image ? (
-                    <img
-                      src={article.hero_image}
-                      alt={article.title}
-                      className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-slate">
-                      No Image
-                    </div>
-                  )}
+                  <InsightsImage
+                    src={article.hero_image}
+                    alt={article.title}
+                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                  />
                   {/* 트렌딩 뱃지 */}
                   {article.trending && (
                     <span className="absolute top-3 left-3 bg-accent text-[9.5px] font-black uppercase text-white tracking-widest px-2.5 py-1 rounded">
