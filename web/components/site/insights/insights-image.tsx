@@ -57,6 +57,11 @@ export function InsightsImage({ src, alt, className = "" }: InsightsImageProps) 
       alt={alt}
       className={className}
       onError={() => setHasError(true)}
+      ref={(el) => {
+        if (el && el.complete && el.naturalWidth === 0) {
+          setHasError(true);
+        }
+      }}
     />
   );
 }
