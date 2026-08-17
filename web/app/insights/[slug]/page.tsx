@@ -304,18 +304,23 @@ export default async function InsightDetailPage({ params }: Props) {
           <div className="mt-12 pr-0 sm:pr-4">
             {article.body_blocks && Array.isArray(article.body_blocks) && (
               article.body_blocks.map((block: any, idx: number) => {
-                switch (block.type) {
+                const type = (block.type || "").toUpperCase();
+                const blockVal = block.content || block.value;
+
+                switch (type) {
                   case "HEADING":
+                  case "HEADER":
                     return (
                       <h2 key={idx} className="display-kr text-[22px] sm:text-[26px] font-bold text-graphite mt-14 mb-6 leading-tight border-b border-hairline pb-3">
-                        {block.value}
+                        {blockVal}
                       </h2>
                     );
                   
                   case "TEXT":
+                  case "PARAGRAPH":
                     return (
-                      <p key={idx} className="body-kr text-[16px] sm:text-[17px] text-slate mb-6 leading-[1.85] text-justify">
-                        {block.value}
+                      <p key={idx} className="body-kr text-[16px] sm:text-[17px] text-slate mb-6 leading-[1.85] text-justify whitespace-pre-wrap">
+                        {blockVal}
                       </p>
                     );
                   
@@ -323,7 +328,7 @@ export default async function InsightDetailPage({ params }: Props) {
                     return (
                       <blockquote key={idx} className="relative border-l-[3px] border-accent pl-6 py-1 my-10 italic text-[17px] sm:text-[18px] text-slate bg-paper-raised/30 rounded-r-lg pr-4">
                         <p className="body-kr font-medium m-0 leading-relaxed">
-                          “{block.value}”
+                          “{blockVal}”
                         </p>
                         {block.author && (
                           <cite className="block not-italic text-[13px] text-slate font-bold mt-3 tracking-wide">
@@ -338,7 +343,7 @@ export default async function InsightDetailPage({ params }: Props) {
                       <div key={idx} className="bg-paper-raised/60 p-6 sm:p-8 rounded-lg my-10 border-l-[4px] border-accent">
                         <span className="micro-label text-accent font-bold">KEY TAKEAWAY</span>
                         <p className="body-kr mt-3 mb-0 text-[15.5px] sm:text-[16.5px] font-medium text-graphite leading-relaxed">
-                          {block.value}
+                          {blockVal}
                         </p>
                       </div>
                     );
@@ -434,9 +439,29 @@ export default async function InsightDetailPage({ params }: Props) {
             <div className="mt-16 border-t border-hairline pt-6 text-[12px] text-slate leading-relaxed">
               <p className="font-semibold mb-2 micro-label uppercase tracking-widest text-[9.5px]">Sources & References</p>
               <ul className="list-decimal pl-4 space-y-1">
-                {article.sources.map((src: string, sIdx: number) => (
-                  <li key={sIdx} className="font-sans italic">{src}</li>
-                ))}
+                {article.sources.map((src: any, sIdx: number) => {
+                  if (typeof src === "string") {
+                    return <li key={sIdx} className="font-sans italic">{src}</li>;
+                  }
+                  if (src && typeof src === "object") {
+                    const text = src.sourceName && src.sourceTitle 
+                      ? `${src.sourceName} — ${src.sourceTitle}` 
+                      : (src.sourceTitle || src.sourceName || src.url || `Source ${sIdx + 1}`);
+                    return (
+                      <li key={sIdx} className="font-sans italic">
+                        {src.url ? (
+                          <a href={src.url} target="_blank" rel="noopener noreferrer" className="hover:text-accent underline transition-colors">
+                            {text}
+                          </a>
+                        ) : (
+                          text
+                        )}
+                        {src.relevantClaim && <span className="text-slate/70 block mt-0.5 not-italic text-[11px]">— {src.relevantClaim}</span>}
+                      </li>
+                    );
+                  }
+                  return null;
+                })}
               </ul>
             </div>
           )}
