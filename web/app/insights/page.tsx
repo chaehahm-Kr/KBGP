@@ -150,6 +150,7 @@ export default async function InsightsPage() {
                     <InsightsImage
                       src={featuredArticle.hero_image}
                       alt={featuredArticle.title}
+                      category={featuredArticle.category}
                       className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-103"
                     />
                   </Link>

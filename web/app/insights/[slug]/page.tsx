@@ -295,6 +295,7 @@ export default async function InsightDetailPage({ params }: Props) {
             <InsightsImage
               src={article.hero_image}
               alt={article.title}
+              category={article.category}
               className="h-full w-full object-cover"
             />
           </div>
