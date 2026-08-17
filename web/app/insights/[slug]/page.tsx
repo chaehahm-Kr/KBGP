@@ -5,6 +5,14 @@ import { SiteHeader } from "@/components/site/nav/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
 import { Section, pillAccent } from "@/components/ui";
 import { InsightsImage } from "@/components/site/insights/insights-image";
+import { ReaderFeedback } from "@/components/site/insights/reader-feedback";
+
+const fallbackIdMap: Record<string, string> = {
+  "why-good-products-fail-us-market-entry": "f4c49bfb-ecf1-4766-b09a-c56e9a8d1660",
+  "scalp-care-k-beauty-hair-opportunity": "ab8bbe2a-cdb7-42d2-ae48-b64e6fc6e1ef",
+  "what-to-verify-with-300-unit-test-launch": "d3ec8ae4-c1c6-405e-a374-0b8c2c69cda6",
+  "scalp-care-us-market-trend-deep-dive": "3d8e4d1c-7be4-4200-b497-3bb3adeeb6ee",
+};
 
 // 폴백용 상세 데이터
 const FALLBACK_DETAILS: Record<string, any> = {
@@ -230,6 +238,8 @@ export default async function InsightDetailPage({ params }: Props) {
     notFound();
   }
 
+  const articleId = article.id || fallbackIdMap[slug] || "f4c49bfb-ecf1-4766-b09a-c56e9a8d1660";
+
   // 폴백 모드에서 이전/다음 링크 채우기
   if (!prevArticle || !nextArticle) {
     const keys = Object.keys(FALLBACK_DETAILS);
@@ -429,6 +439,9 @@ export default async function InsightDetailPage({ params }: Props) {
               </ul>
             </div>
           )}
+
+          {/* 독자 피드백 UI (👍 도움이 됨 / 👎 아쉬움) */}
+          <ReaderFeedback articleId={articleId} portalUrl={portalApiUrl} channel="NETWORK" />
 
           {/* D. Partnership CTA Banner */}
           <div className="mt-16 bg-paper-raised/50 border border-hairline p-8 rounded-lg text-center flex flex-col items-center">
