@@ -61,6 +61,12 @@ export type EligibilityResponseInput = {
 export type ApplicationInput = {
   companyName: string;
   businessNumber: string;
+  country: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  state: string;
+  postalCode: string;
   companyAddress: string;
   brandName: string;
   homepage: string;
@@ -92,6 +98,12 @@ export const emptyProduct = (): ProductInput => ({
 export const emptyApplication = (): ApplicationInput => ({
   companyName: "",
   businessNumber: "",
+  country: "대한민국",
+  addressLine1: "",
+  addressLine2: "",
+  city: "",
+  state: "",
+  postalCode: "",
   companyAddress: "",
   brandName: "",
   homepage: "",
@@ -113,8 +125,20 @@ export function validateApplication(input: ApplicationInput): string[] {
   if (!input.companyName.trim()) errors.push("회사명을 입력해 주십시오.");
   if (!input.businessNumber.trim())
     errors.push("사업자등록번호를 입력해 주십시오.");
-  if (!input.companyAddress.trim())
-    errors.push("회사주소를 입력해 주십시오.");
+  
+  if (!input.addressLine1?.trim() && !input.companyAddress?.trim()) {
+    errors.push("기본 주소를 입력해 주십시오.");
+  }
+  if (!input.city?.trim() && !input.companyAddress?.trim()) {
+    errors.push("도시(City)를 입력해 주십시오.");
+  }
+  if (!input.state?.trim() && !input.companyAddress?.trim()) {
+    errors.push("주/도(State/Province)를 입력해 주십시오.");
+  }
+  if (!input.postalCode?.trim() && !input.companyAddress?.trim()) {
+    errors.push("우편번호(ZIP/Postal Code)를 입력해 주십시오.");
+  }
+
   if (!input.contactName.trim()) errors.push("담당자명을 입력해 주십시오.");
 
   if (!input.email.trim()) errors.push("이메일을 입력해 주십시오.");
@@ -134,17 +158,21 @@ export function validateApplication(input: ApplicationInput): string[] {
     else if (!productCategoryOptions.includes(p.category))
       errors.push(`${label}: 카테고리 값이 올바르지 않습니다.`);
 
-    if (!p.packageWidth.trim() || !p.packageDepth.trim() || !p.packageHeight.trim()) {
-      errors.push(`${label}: 상품 포장 정보(가로·세로·높이)를 모두 입력해 주십시오.`);
+    // 규격 (가로, 세로, 높이) - 선택 사항
+    const hasAnyDim = Boolean(p.packageWidth.trim() || p.packageDepth.trim() || p.packageHeight.trim());
+    if (hasAnyDim) {
+      if (!p.packageWidth.trim() || !p.packageDepth.trim() || !p.packageHeight.trim()) {
+        errors.push(`${label}: 상품 포장 규격 입력 시 가로·세로·높이를 모두 입력해 주십시오.`);
+      }
+      if (!p.dimensionUnit) {
+        errors.push(`${label}: 상품 포장 규격의 단위(cm 또는 inch)를 선택해 주십시오.`);
+      }
     }
-    if (!p.dimensionUnit) {
-      errors.push(`${label}: 상품 포장 정보의 크기 단위(cm 또는 inch)를 선택해 주십시오.`);
-    }
-    if (!p.packageWeight.trim()) {
-      errors.push(`${label}: 상품 포장 정보(무게)를 입력해 주십시오.`);
-    }
-    if (!p.weightUnit) {
-      errors.push(`${label}: 상품 포장 정보의 무게 단위(kg, g 또는 lb)를 선택해 주십시오.`);
+
+    // 무게 - 선택 사항
+    const hasWeight = Boolean(p.packageWeight.trim());
+    if (hasWeight && !p.weightUnit) {
+      errors.push(`${label}: 상품 포장 무게의 단위(g, kg 또는 lb)를 선택해 주십시오.`);
     }
   });
 

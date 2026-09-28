@@ -238,17 +238,16 @@ export function ApplyModal({
     const order: [boolean, string][] = [
       [!data.companyName.trim(), "companyName"],
       [!data.businessNumber.trim(), "businessNumber"],
-      [!data.companyAddress.trim(), "companyAddress"],
+      [!data.addressLine1.trim(), "addressLine1"],
+      [!data.city.trim(), "city"],
+      [!data.state.trim(), "state"],
+      [!data.postalCode.trim(), "postalCode"],
       [!data.contactName.trim(), "contactName"],
       [!data.email.trim(), "email"],
       [!data.phone.trim(), "phone"],
       ...data.products.flatMap((p, i): [boolean, string][] => [
         [!p.name.trim(), `p-name-${i}`],
         [!p.category.trim(), `p-cat-${i}`],
-        [!p.packageWidth.trim(), `p-width-${i}`],
-        [!p.packageDepth.trim(), `p-depth-${i}`],
-        [!p.packageHeight.trim(), `p-height-${i}`],
-        [!p.packageWeight.trim(), `p-weight-${i}`],
       ]),
       [!data.agreePrivacy, "agreePrivacy"],
     ];
@@ -275,8 +274,21 @@ export function ApplyModal({
       console.error("Failed to load eligibility responses from sessionStorage:", e);
     }
 
+    const fullCompanyAddress = [
+      data.addressLine1.trim(),
+      data.addressLine2.trim(),
+      data.city.trim(),
+      data.state.trim(),
+      data.postalCode.trim() ? `(${data.postalCode.trim()})` : "",
+      data.country.trim(),
+    ]
+      .filter(Boolean)
+      .join(" ");
+
     const payloadData = {
       ...data,
+      country: data.country || "대한민국",
+      companyAddress: fullCompanyAddress || data.companyAddress,
       eligibilityResponses,
     };
 
@@ -445,21 +457,111 @@ export function ApplyModal({
                   value={data.businessNumber}
                   onChange={(e) => set("businessNumber", e.target.value)}
                 />
-                <p className="body-kr mt-1.5 text-[12px] text-slate/85 leading-relaxed">
-                  ※ 추후 파트너 포털(Brand SaaS) 계정 오픈 시 본인 확인 검증 도구로 사용되니 정확히 입력해 주십시오.
-                </p>
+                <div className="mt-2.5 rounded-lg border border-amber-300/70 bg-amber-50/80 p-3 text-amber-900 dark:border-amber-800/60 dark:bg-amber-950/30 dark:text-amber-200">
+                  <div className="flex items-start gap-2">
+                    <span className="text-amber-600 dark:text-amber-400 text-sm font-bold shrink-0 mt-0.5">⚠️</span>
+                    <p className="body-kr m-0 text-[12.5px] leading-relaxed">
+                      <strong className="font-bold text-amber-950 dark:text-amber-100">중요:</strong> 사업자등록번호는 추후 파트너 포털(Brand SaaS) 계정 개설 시 본인 확인 및 회사 인증에 사용됩니다. 정확히 입력해 주세요.
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="sm:col-span-2">
-                <label className={labelCls} htmlFor="companyAddress">
-                  회사주소 <span className="text-warn">*</span>
-                </label>
-                <input
-                  id="companyAddress"
-                  required
-                  className={field}
-                  value={data.companyAddress}
-                  onChange={(e) => set("companyAddress", e.target.value)}
-                />
+              <div className="sm:col-span-2 space-y-3">
+                <div>
+                  <label className={labelCls} htmlFor="companyCountry">
+                    국가 (Country) <span className="text-warn">*</span>
+                  </label>
+                  <select
+                    id="companyCountry"
+                    required
+                    className={`${field} appearance-none`}
+                    value={data.country}
+                    onChange={(e) => set("country", e.target.value)}
+                  >
+                    <option value="대한민국">대한민국 (South Korea)</option>
+                    <option value="미국">미국 (United States)</option>
+                    <option value="일본">일본 (Japan)</option>
+                    <option value="중국">중국 (China)</option>
+                    <option value="홍콩">홍콩 (Hong Kong)</option>
+                    <option value="싱가포르">싱가포르 (Singapore)</option>
+                    <option value="베트남">베트남 (Vietnam)</option>
+                    <option value="캐나다">캐나다 (Canada)</option>
+                    <option value="영국">영국 (United Kingdom)</option>
+                    <option value="독일">독일 (Germany)</option>
+                    <option value="프랑스">프랑스 (France)</option>
+                    <option value="호주">호주 (Australia)</option>
+                    <option value="기타">기타 (Other)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className={labelCls} htmlFor="addressLine1">
+                    기본 주소 (Address Line 1) <span className="text-warn">*</span>
+                  </label>
+                  <input
+                    id="addressLine1"
+                    required
+                    placeholder="도로명 주소 또는 기본 주소 (Street address, P.O. box)"
+                    className={field}
+                    value={data.addressLine1}
+                    onChange={(e) => set("addressLine1", e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className={labelCls} htmlFor="addressLine2">
+                    상세 주소 (Address Line 2) <span className="text-slate text-[12px] font-normal">(선택)</span>
+                  </label>
+                  <input
+                    id="addressLine2"
+                    placeholder="동/호수, 층, 건물명 등 상세 주소 (Apt, Suite, Unit, Building, Floor)"
+                    className={field}
+                    value={data.addressLine2}
+                    onChange={(e) => set("addressLine2", e.target.value)}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  <div>
+                    <label className={labelCls} htmlFor="city">
+                      도시 (City) <span className="text-warn">*</span>
+                    </label>
+                    <input
+                      id="city"
+                      required
+                      placeholder="시/군/구 (City)"
+                      className={field}
+                      value={data.city}
+                      onChange={(e) => set("city", e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelCls} htmlFor="state">
+                      주 / 도 (State / Province) <span className="text-warn">*</span>
+                    </label>
+                    <input
+                      id="state"
+                      required
+                      placeholder="시/도 (State / Province / Region)"
+                      className={field}
+                      value={data.state}
+                      onChange={(e) => set("state", e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelCls} htmlFor="postalCode">
+                      우편번호 (Postal Code) <span className="text-warn">*</span>
+                    </label>
+                    <input
+                      id="postalCode"
+                      required
+                      placeholder="우편번호 (ZIP / Postal Code)"
+                      className={field}
+                      value={data.postalCode}
+                      onChange={(e) => set("postalCode", e.target.value)}
+                    />
+                  </div>
+                </div>
               </div>
               <div>
                 <label className={labelCls} htmlFor="brandName">
@@ -601,7 +703,7 @@ export function ApplyModal({
                 </label>
                 <div className="mt-2 flex gap-2">
                   <select
-                    className="rounded-lg border border-hairline bg-paper px-3 py-3 text-[15px] text-graphite appearance-none min-w-[90px]"
+                    className="rounded-lg border border-hairline bg-paper px-3 py-3 text-[14px] text-graphite appearance-none w-[140px] shrink-0"
                     value={countryCode}
                     onChange={(e) => setCountryCode(e.target.value)}
                   >
@@ -615,6 +717,7 @@ export function ApplyModal({
                     <option value="+61">Australia (+61)</option>
                     <option value="+65">Singapore (+65)</option>
                     <option value="+84">Vietnam (+84)</option>
+                    <option value="+852">Hong Kong (+852)</option>
                   </select>
                   <input
                     id="phone"
@@ -721,12 +824,11 @@ export function ApplyModal({
                     {/* 상품 포장 정보: 부피(규격) */}
                     <div className="sm:col-span-2">
                       <label className={labelCls}>
-                        상품 포장 정보: 규격 <span className="text-warn">*</span>
+                        상품 포장 정보: 규격 <span className="text-slate text-[12px] font-normal">(선택)</span>
                       </label>
                       <div className="mt-2 flex items-center gap-2">
                         <input
                           id={`p-width-${index}`}
-                          required
                           type="number"
                           placeholder="가로"
                           className="w-full rounded-lg border border-hairline bg-paper px-3 py-3 text-[15px] text-graphite [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -738,7 +840,6 @@ export function ApplyModal({
                         <span className="text-slate text-[13px] font-semibold">x</span>
                         <input
                           id={`p-depth-${index}`}
-                          required
                           type="number"
                           placeholder="세로"
                           className="w-full rounded-lg border border-hairline bg-paper px-3 py-3 text-[15px] text-graphite [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -750,7 +851,6 @@ export function ApplyModal({
                         <span className="text-slate text-[13px] font-semibold">x</span>
                         <input
                           id={`p-height-${index}`}
-                          required
                           type="number"
                           placeholder="높이"
                           className="w-full rounded-lg border border-hairline bg-paper px-3 py-3 text-[15px] text-graphite [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -761,7 +861,6 @@ export function ApplyModal({
                         />
                         <select
                           id={`p-dimunit-${index}`}
-                          required
                           className="rounded-lg border border-hairline bg-paper px-3 py-3 text-[15px] text-graphite appearance-none min-w-[90px]"
                           value={product.dimensionUnit}
                           onChange={(e) =>
@@ -778,12 +877,11 @@ export function ApplyModal({
                     {/* 상품 포장 정보: 무게 */}
                     <div className="sm:col-span-2">
                       <label className={labelCls} htmlFor={`p-weight-${index}`}>
-                        상품 포장 정보: 무게 <span className="text-warn">*</span>
+                        상품 포장 정보: 무게 <span className="text-slate text-[12px] font-normal">(선택)</span>
                       </label>
                       <div className="mt-2 flex gap-2">
                         <input
                           id={`p-weight-${index}`}
-                          required
                           type="number"
                           placeholder="무게"
                           className="w-full rounded-lg border border-hairline bg-paper px-3 py-3 text-[15px] text-graphite [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -794,7 +892,6 @@ export function ApplyModal({
                         />
                         <select
                           id={`p-weightunit-${index}`}
-                          required
                           className="rounded-lg border border-hairline bg-paper px-3 py-3 text-[15px] text-graphite appearance-none min-w-[90px]"
                           value={product.weightUnit}
                           onChange={(e) =>
@@ -826,7 +923,7 @@ export function ApplyModal({
                     </div>
                     <div>
                       <label className={labelCls} htmlFor={`p-leadtime-${index}`}>
-                        대략적인 리드 타임 (Lead Time)
+                        리드 타임 (Lead Time)
                       </label>
                       <input
                         id={`p-leadtime-${index}`}
