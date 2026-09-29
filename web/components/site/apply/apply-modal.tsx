@@ -226,6 +226,8 @@ export function ApplyModal({
       ),
     );
 
+  const isKorea = !data.country || data.country === "대한민국" || data.country === "South Korea" || data.country === "KR" || data.country === "Korea";
+
   /**
    * 폼에 noValidate 를 둔 이유: 브라우저 기본 검증이 submit 을 먼저 막으면
    * 한국어 오류 요약이 뜨지 않고, 기본 메시지는 브라우저 언어를 따라간다.
@@ -242,7 +244,10 @@ export function ApplyModal({
       [!data.city.trim(), "city"],
       [!data.state.trim(), "state"],
       [!data.postalCode.trim(), "postalCode"],
-      [!data.contactName.trim(), "contactName"],
+      [isKorea && !data.koreanLastName.trim(), "koreanLastName"],
+      [isKorea && !data.koreanFirstName.trim(), "koreanFirstName"],
+      [!data.englishFirstName.trim(), "englishFirstName"],
+      [!data.englishLastName.trim(), "englishLastName"],
       [!data.email.trim(), "email"],
       [!data.phone.trim(), "phone"],
       ...data.products.flatMap((p, i): [boolean, string][] => [
@@ -285,8 +290,15 @@ export function ApplyModal({
       .filter(Boolean)
       .join(" ");
 
+    const effectiveContactName = (
+      (data.koreanLastName && data.koreanFirstName ? `${data.koreanLastName.trim()}${data.koreanFirstName.trim()}` : "") ||
+      `${data.englishFirstName.trim()} ${data.englishLastName.trim()}`.trim() ||
+      data.contactName.trim()
+    );
+
     const payloadData = {
       ...data,
+      contactName: effectiveContactName,
       country: data.country || "대한민국",
       companyAddress: fullCompanyAddress || data.companyAddress,
       eligibilityResponses,
@@ -594,24 +606,70 @@ export function ApplyModal({
           <fieldset className="m-0 mt-10 border-0 border-t border-hairline p-0 pt-8">
             <legend className={legendCls}>02 — 담당자 정보</legend>
             <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+              {/* Row 1: 한글 성 & 한글 이름 */}
               <div>
-                <label className={labelCls} htmlFor="contactName">
-                  담당자명 <span className="text-warn">*</span>
+                <label className={labelCls} htmlFor="koreanLastName">
+                  한글 성 (Korean Last Name) {isKorea && <span className="text-warn">*</span>}
                 </label>
                 <input
-                  id="contactName"
-                  required
+                  id="koreanLastName"
+                  required={isKorea}
+                  placeholder="예: 홍"
                   className={field}
-                  value={data.contactName}
-                  onChange={(e) => set("contactName", e.target.value)}
+                  value={data.koreanLastName}
+                  onChange={(e) => set("koreanLastName", e.target.value)}
                 />
               </div>
               <div>
+                <label className={labelCls} htmlFor="koreanFirstName">
+                  한글 이름 (Korean First Name) {isKorea && <span className="text-warn">*</span>}
+                </label>
+                <input
+                  id="koreanFirstName"
+                  required={isKorea}
+                  placeholder="예: 길동"
+                  className={field}
+                  value={data.koreanFirstName}
+                  onChange={(e) => set("koreanFirstName", e.target.value)}
+                />
+              </div>
+
+              {/* Row 2: 영문 이름 (First Name) & 영문 성 (Last Name) */}
+              <div>
+                <label className={labelCls} htmlFor="englishFirstName">
+                  영문 이름 (First Name) <span className="text-warn">*</span>
+                </label>
+                <input
+                  id="englishFirstName"
+                  required
+                  placeholder="예: Gildong"
+                  className={field}
+                  value={data.englishFirstName}
+                  onChange={(e) => set("englishFirstName", e.target.value)}
+                />
+              </div>
+              <div>
+                <label className={labelCls} htmlFor="englishLastName">
+                  영문 성 (Last Name) <span className="text-warn">*</span>
+                </label>
+                <input
+                  id="englishLastName"
+                  required
+                  placeholder="예: Hong"
+                  className={field}
+                  value={data.englishLastName}
+                  onChange={(e) => set("englishLastName", e.target.value)}
+                />
+              </div>
+
+              {/* Row 3: 직함 */}
+              <div className="sm:col-span-2">
                 <label className={labelCls} htmlFor="contactTitle">
-                  직함
+                  직함 (Title / Position)
                 </label>
                 <input
                   id="contactTitle"
+                  placeholder="예: 대표이사 / 해외영업팀 팀장"
                   className={field}
                   value={data.contactTitle}
                   onChange={(e) => set("contactTitle", e.target.value)}

@@ -71,6 +71,10 @@ export type ApplicationInput = {
   brandName: string;
   homepage: string;
   contactName: string;
+  koreanLastName: string;
+  koreanFirstName: string;
+  englishFirstName: string;
+  englishLastName: string;
   contactTitle: string;
   email: string;
   phone: string;
@@ -108,6 +112,10 @@ export const emptyApplication = (): ApplicationInput => ({
   brandName: "",
   homepage: "",
   contactName: "",
+  koreanLastName: "",
+  koreanFirstName: "",
+  englishFirstName: "",
+  englishLastName: "",
   contactTitle: "",
   email: "",
   phone: "",
@@ -139,7 +147,29 @@ export function validateApplication(input: ApplicationInput): string[] {
     errors.push("우편번호(ZIP/Postal Code)를 입력해 주십시오.");
   }
 
-  if (!input.contactName.trim()) errors.push("담당자명을 입력해 주십시오.");
+  // Country-aware name validation
+  const countryTrimmed = (input.country || "").trim();
+  const isKorea = !countryTrimmed || countryTrimmed === "대한민국" || countryTrimmed === "South Korea" || countryTrimmed === "KR" || countryTrimmed === "Korea";
+
+  if (isKorea) {
+    if (!input.koreanLastName?.trim()) errors.push("한글 성을 입력해 주십시오.");
+    if (!input.koreanFirstName?.trim()) errors.push("한글 이름을 입력해 주십시오.");
+    if (!input.englishFirstName?.trim()) errors.push("영문 이름(First Name)을 입력해 주십시오.");
+    if (!input.englishLastName?.trim()) errors.push("영문 성(Last Name)을 입력해 주십시오.");
+  } else {
+    if (!input.englishFirstName?.trim()) errors.push("영문 이름(First Name)을 입력해 주십시오.");
+    if (!input.englishLastName?.trim()) errors.push("영문 성(Last Name)을 입력해 주십시오.");
+  }
+
+  const effectiveContactName = (
+    input.contactName ||
+    (input.koreanLastName && input.koreanFirstName ? `${input.koreanLastName}${input.koreanFirstName}` : "") ||
+    `${input.englishFirstName || ""} ${input.englishLastName || ""}`.trim()
+  ).trim();
+
+  if (!effectiveContactName) {
+    errors.push("담당자명을 입력해 주십시오.");
+  }
 
   if (!input.email.trim()) errors.push("이메일을 입력해 주십시오.");
   else if (!EMAIL_RE.test(input.email.trim()))
