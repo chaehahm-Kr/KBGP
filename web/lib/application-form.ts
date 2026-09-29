@@ -154,11 +154,11 @@ export function validateApplication(input: ApplicationInput): string[] {
   if (isKorea) {
     if (!input.koreanLastName?.trim()) errors.push("한글 성을 입력해 주십시오.");
     if (!input.koreanFirstName?.trim()) errors.push("한글 이름을 입력해 주십시오.");
-    if (!input.englishFirstName?.trim()) errors.push("영문 이름(First Name)을 입력해 주십시오.");
     if (!input.englishLastName?.trim()) errors.push("영문 성(Last Name)을 입력해 주십시오.");
+    if (!input.englishFirstName?.trim()) errors.push("영문 이름(First Name)을 입력해 주십시오.");
   } else {
-    if (!input.englishFirstName?.trim()) errors.push("영문 이름(First Name)을 입력해 주십시오.");
     if (!input.englishLastName?.trim()) errors.push("영문 성(Last Name)을 입력해 주십시오.");
+    if (!input.englishFirstName?.trim()) errors.push("영문 이름(First Name)을 입력해 주십시오.");
   }
 
   const effectiveContactName = (

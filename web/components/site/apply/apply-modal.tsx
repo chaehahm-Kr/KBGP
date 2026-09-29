@@ -246,8 +246,8 @@ export function ApplyModal({
       [!data.postalCode.trim(), "postalCode"],
       [isKorea && !data.koreanLastName.trim(), "koreanLastName"],
       [isKorea && !data.koreanFirstName.trim(), "koreanFirstName"],
-      [!data.englishFirstName.trim(), "englishFirstName"],
       [!data.englishLastName.trim(), "englishLastName"],
+      [!data.englishFirstName.trim(), "englishFirstName"],
       [!data.email.trim(), "email"],
       [!data.phone.trim(), "phone"],
       ...data.products.flatMap((p, i): [boolean, string][] => [
@@ -634,20 +634,7 @@ export function ApplyModal({
                 />
               </div>
 
-              {/* Row 2: 영문 이름 (First Name) & 영문 성 (Last Name) */}
-              <div>
-                <label className={labelCls} htmlFor="englishFirstName">
-                  영문 이름 (First Name) <span className="text-warn">*</span>
-                </label>
-                <input
-                  id="englishFirstName"
-                  required
-                  placeholder="예: Gildong"
-                  className={field}
-                  value={data.englishFirstName}
-                  onChange={(e) => set("englishFirstName", e.target.value)}
-                />
-              </div>
+              {/* Row 2: 영문 성 (Last Name) & 영문 이름 (First Name) */}
               <div>
                 <label className={labelCls} htmlFor="englishLastName">
                   영문 성 (Last Name) <span className="text-warn">*</span>
@@ -659,6 +646,19 @@ export function ApplyModal({
                   className={field}
                   value={data.englishLastName}
                   onChange={(e) => set("englishLastName", e.target.value)}
+                />
+              </div>
+              <div>
+                <label className={labelCls} htmlFor="englishFirstName">
+                  영문 이름 (First Name) <span className="text-warn">*</span>
+                </label>
+                <input
+                  id="englishFirstName"
+                  required
+                  placeholder="예: Gildong"
+                  className={field}
+                  value={data.englishFirstName}
+                  onChange={(e) => set("englishFirstName", e.target.value)}
                 />
               </div>
 
