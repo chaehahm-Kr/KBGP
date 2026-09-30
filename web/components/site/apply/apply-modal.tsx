@@ -12,6 +12,8 @@ import {
   emptyProduct,
   formatMb,
   productCategoryOptions,
+  isPureEnglishName,
+  isNumericPrice,
   validateApplication,
   validateFile,
   validateTotalSize,
@@ -643,10 +645,15 @@ export function ApplyModal({
                   id="englishLastName"
                   required
                   placeholder="예: Hong"
-                  className={field}
+                  className={`${field} ${data.englishLastName && !isPureEnglishName(data.englishLastName) ? "!border-warn ring-1 ring-warn/30" : ""}`}
                   value={data.englishLastName}
                   onChange={(e) => set("englishLastName", e.target.value)}
                 />
+                {data.englishLastName && !isPureEnglishName(data.englishLastName) && (
+                  <p className="mt-1 text-xs font-semibold text-warn">
+                    영문 성은 영문자로 입력해 주세요.
+                  </p>
+                )}
               </div>
               <div>
                 <label className={labelCls} htmlFor="englishFirstName">
@@ -656,10 +663,15 @@ export function ApplyModal({
                   id="englishFirstName"
                   required
                   placeholder="예: Gildong"
-                  className={field}
+                  className={`${field} ${data.englishFirstName && !isPureEnglishName(data.englishFirstName) ? "!border-warn ring-1 ring-warn/30" : ""}`}
                   value={data.englishFirstName}
                   onChange={(e) => set("englishFirstName", e.target.value)}
                 />
+                {data.englishFirstName && !isPureEnglishName(data.englishFirstName) && (
+                  <p className="mt-1 text-xs font-semibold text-warn">
+                    영문 이름은 영문자로 입력해 주세요.
+                  </p>
+                )}
               </div>
 
               {/* Row 3: 직함 */}
@@ -859,12 +871,18 @@ export function ApplyModal({
                       <input
                         id={`p-price-${index}`}
                         inputMode="numeric"
-                        className={field}
+                        placeholder="예: 15000"
+                        className={`${field} ${product.priceKrw && !isNumericPrice(product.priceKrw) ? "!border-warn ring-1 ring-warn/30" : ""}`}
                         value={product.priceKrw}
                         onChange={(e) =>
                           setProduct(index, { priceKrw: e.target.value })
                         }
                       />
+                      {product.priceKrw && !isNumericPrice(product.priceKrw) && (
+                        <p className="mt-1 text-xs font-semibold text-warn">
+                          가격은 숫자만 입력해 주세요.
+                        </p>
+                      )}
                     </div>
                     <div>
                       <label className={labelCls} htmlFor={`p-supply-${index}`}>
@@ -872,12 +890,19 @@ export function ApplyModal({
                       </label>
                       <input
                         id={`p-supply-${index}`}
-                        className={field}
+                        inputMode="decimal"
+                        placeholder="예: 8.50"
+                        className={`${field} ${product.supplyPriceUsd && !isNumericPrice(product.supplyPriceUsd) ? "!border-warn ring-1 ring-warn/30" : ""}`}
                         value={product.supplyPriceUsd}
                         onChange={(e) =>
                           setProduct(index, { supplyPriceUsd: e.target.value })
                         }
                       />
+                      {product.supplyPriceUsd && !isNumericPrice(product.supplyPriceUsd) && (
+                        <p className="mt-1 text-xs font-semibold text-warn">
+                          가격은 올바른 숫자 형식으로 입력해 주세요. 예: 12.99
+                        </p>
+                      )}
                     </div>
                     {/* 상품 포장 정보: 부피(규격) */}
                     <div className="sm:col-span-2">

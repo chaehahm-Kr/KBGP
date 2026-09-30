@@ -124,6 +124,31 @@ export const emptyApplication = (): ApplicationInput => ({
   eligibilityResponses: [],
 });
 
+// ============================================================================
+// Shared Validation Rules (SYS-VAL-001 Standard)
+// ============================================================================
+export const ENGLISH_NAME_REGEX = /^[A-Za-z\s'\-]+$/;
+
+export function isPureEnglishName(name?: string | null): boolean {
+  if (!name || typeof name !== "string") return false;
+  const trimmed = name.trim();
+  if (trimmed.length === 0) return false;
+  return ENGLISH_NAME_REGEX.test(trimmed);
+}
+
+export const NUMERIC_PRICE_REGEX = /^(?:0|[1-9]\d*)(?:\.\d+)?$/;
+
+export function isNumericPrice(val: unknown, allowZero = true): boolean {
+  if (val === null || val === undefined) return false;
+  const str = String(val).trim();
+  if (str === "") return false;
+  if (!NUMERIC_PRICE_REGEX.test(str)) return false;
+  const num = Number(str);
+  if (isNaN(num)) return false;
+  if (!allowZero && num <= 0) return false;
+  return num >= 0;
+}
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /** 사람이 읽을 수 있는 오류 메시지 배열을 돌려준다. 비어 있으면 통과. */
@@ -154,11 +179,19 @@ export function validateApplication(input: ApplicationInput): string[] {
   if (isKorea) {
     if (!input.koreanLastName?.trim()) errors.push("한글 성을 입력해 주십시오.");
     if (!input.koreanFirstName?.trim()) errors.push("한글 이름을 입력해 주십시오.");
-    if (!input.englishLastName?.trim()) errors.push("영문 성(Last Name)을 입력해 주십시오.");
-    if (!input.englishFirstName?.trim()) errors.push("영문 이름(First Name)을 입력해 주십시오.");
-  } else {
-    if (!input.englishLastName?.trim()) errors.push("영문 성(Last Name)을 입력해 주십시오.");
-    if (!input.englishFirstName?.trim()) errors.push("영문 이름(First Name)을 입력해 주십시오.");
+  }
+
+  // English First/Last Name Validation
+  if (!input.englishLastName?.trim()) {
+    errors.push("영문 성(Last Name)을 입력해 주십시오.");
+  } else if (!isPureEnglishName(input.englishLastName)) {
+    errors.push("영문 성은 영문자로 입력해 주세요.");
+  }
+
+  if (!input.englishFirstName?.trim()) {
+    errors.push("영문 이름(First Name)을 입력해 주십시오.");
+  } else if (!isPureEnglishName(input.englishFirstName)) {
+    errors.push("영문 이름은 영문자로 입력해 주세요.");
   }
 
   const effectiveContactName = (
@@ -187,6 +220,19 @@ export function validateApplication(input: ApplicationInput): string[] {
     if (!p.category.trim()) errors.push(`${label}: 카테고리를 선택해 주십시오.`);
     else if (!productCategoryOptions.includes(p.category))
       errors.push(`${label}: 카테고리 값이 올바르지 않습니다.`);
+
+    // Price Validation
+    if (p.priceKrw?.trim()) {
+      if (!isNumericPrice(p.priceKrw)) {
+        errors.push(`${label}: 국내 판매가는 숫자만 입력해 주세요.`);
+      }
+    }
+
+    if (p.supplyPriceUsd?.trim()) {
+      if (!isNumericPrice(p.supplyPriceUsd)) {
+        errors.push(`${label}: 공급가는 올바른 숫자 형식으로 입력해 주세요. 예: 12.99`);
+      }
+    }
 
     // 규격 (가로, 세로, 높이) - 선택 사항
     const hasAnyDim = Boolean(p.packageWidth.trim() || p.packageDepth.trim() || p.packageHeight.trim());
