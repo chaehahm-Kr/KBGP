@@ -21,11 +21,15 @@ const columns = [
   },
 ];
 
+interface SiteFooterProps {
+  lang?: "ko" | "en";
+}
+
 /**
  * 홈과 수출바우처 페이지가 공유하는 푸터. 각 페이지의 CTA 다크 블록 바로
  * 아래에 이어 붙어 하나의 다크 구간으로 읽힌다.
  */
-export function SiteFooter() {
+export function SiteFooter({ lang = "ko" }: SiteFooterProps = {}) {
   return (
     <footer className="bg-ink text-ivory">
       <div className="shell pb-[clamp(48px,6vw,80px)]">
@@ -80,7 +84,15 @@ export function SiteFooter() {
 
         <div className="mt-16 flex flex-wrap justify-between gap-6 border-t border-hairline-dark pt-6 text-sm text-dark-label">
           <p>K-Beauty Growth Program · K Select Network · Letusto Inc.</p>
-          <p>© Letusto Inc. · 개인정보처리방침</p>
+          <p>
+            © Letusto Inc. ·{" "}
+            <Link
+              href="/privacy"
+              className="hover:text-ivory transition-colors underline-offset-2 hover:underline"
+            >
+              {lang === "en" ? "Privacy Policy" : "개인정보처리방침"}
+            </Link>
+          </p>
         </div>
       </div>
     </footer>
