@@ -180,12 +180,12 @@ export const processSteps = [
 export const categories = [
   {
     label: "K-스킨케어",
-    share: 60,
+    share: 50,
     items: "클렌징, 토너/미스트, 에센스/세럼/앰플, 모이스처라이저, 선케어, 마스크/패치, 아이/립 케어",
   },
   {
     label: "K-헤어케어",
-    share: 10,
+    share: 20,
     items: "샴푸/클렌징, 컨디셔너/트리트먼트, 스칼프 케어, 헤어 스타일링, 리브인/에센스, 헤어 컬러",
   },
   {
