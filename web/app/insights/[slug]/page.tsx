@@ -6,6 +6,53 @@ import { SiteFooter } from "@/components/site/site-footer";
 import { Section, pillAccent } from "@/components/ui";
 import { InsightsImage } from "@/components/site/insights/insights-image";
 import { ReaderFeedback } from "@/components/site/insights/reader-feedback";
+import { PdfDownloadCard } from "@/components/site/insights/pdf-download-card";
+import React from "react";
+
+function renderInlineRichText(text: string): React.ReactNode {
+  if (!text) return null;
+  const parts: React.ReactNode[] = [];
+  const linkRe = /\[([^\]]+)\]\(([^)]+)\)/g;
+  let lastIdx = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = linkRe.exec(text)) !== null) {
+    if (match.index > lastIdx) {
+      parts.push(text.slice(lastIdx, match.index));
+    }
+    const label = match[1];
+    const href = match[2];
+    if (href.startsWith("/")) {
+      parts.push(
+        <Link
+          key={`${match.index}-${href}`}
+          href={href}
+          className="font-semibold text-accent underline underline-offset-4 hover:text-accent-ink transition-colors"
+        >
+          {label}
+        </Link>
+      );
+    } else {
+      parts.push(
+        <a
+          key={`${match.index}-${href}`}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-semibold text-accent underline underline-offset-4 hover:text-accent-ink transition-colors"
+        >
+          {label}
+        </a>
+      );
+    }
+    lastIdx = match.index + match[0].length;
+  }
+
+  if (lastIdx < text.length) {
+    parts.push(text.slice(lastIdx));
+  }
+  return parts;
+}
 
 const fallbackIdMap: Record<string, string> = {
   "why-good-products-fail-us-market-entry": "f4c49bfb-ecf1-4766-b09a-c56e9a8d1660",
@@ -205,26 +252,36 @@ const FALLBACK_DETAILS: Record<string, any> = {
 
 interface Props {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ preview?: string }>;
 }
 
-export default async function InsightDetailPage({ params }: Props) {
+export default async function InsightDetailPage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const resolvedSearch = searchParams ? await searchParams : {};
+  const previewToken = resolvedSearch?.preview;
   const portalApiUrl = process.env.PORTAL_API_URL || "http://localhost:3010";
 
   let article = null;
+  let relatedArticle = null;
   let prevArticle = null;
   let nextArticle = null;
+  let isPreview = false;
 
   try {
-    const res = await fetch(`${portalApiUrl}/api/insights?slug=${slug}&channel=K_SELECT_NETWORK`, {
-      cache: "no-store"
+    const apiUrl = `${portalApiUrl}/api/insights?slug=${encodeURIComponent(slug)}&channel=K_SELECT_NETWORK${
+      previewToken ? `&preview=${encodeURIComponent(previewToken)}` : ""
+    }`;
+    const res = await fetch(apiUrl, {
+      cache: "no-store",
     });
 
     if (res.ok) {
       const data = await res.json();
       article = data.article;
+      relatedArticle = data.relatedArticle || null;
       prevArticle = data.prevArticle;
       nextArticle = data.nextArticle;
+      isPreview = Boolean(data.isPreview);
     } else {
       console.warn(`Article not found via API for slug: ${slug}. Falling back to static data.`);
       article = FALLBACK_DETAILS[slug];
@@ -260,11 +317,21 @@ export default async function InsightDetailPage({ params }: Props) {
     }
   }
 
+  const hasInlinePdfBlock =
+    Array.isArray(article.body_blocks) &&
+    article.body_blocks.some((b: any) => String(b?.type || "").toUpperCase() === "PDF_DOWNLOAD");
+
   return (
     <>
       <SiteHeader />
       <main className="bg-paper min-h-screen text-graphite pt-[clamp(56px,8vw,110px)] pb-24">
         <article className="shell max-w-[800px]">
+          {isPreview && (
+            <div className="mb-8 rounded-lg border border-accent/30 bg-paper-raised px-5 py-3.5 text-center text-[13px] font-semibold text-graphite">
+              DRAFT PREVIEW — 관리자 검토용 비공개 미리보기 화면입니다. 최종 승인 및 게시 전까지 일반 방문자에게는 노출되지 않습니다.
+            </div>
+          )}
+
           {/* 머리말 메타정보 */}
           <div className="text-center">
             <span className="micro-label text-accent font-bold tracking-widest">{article.category}</span>
@@ -281,7 +348,7 @@ export default async function InsightDetailPage({ params }: Props) {
               <span>{article.author}</span>
               <span className="h-2.5 w-[1px] bg-hairline" />
               <span className="tnum">
-                {new Date(article.publish_date).toLocaleDateString('ko-KR', {
+                {new Date(article.publish_date || article.created_at || new Date().toISOString()).toLocaleDateString('ko-KR', {
                   year: 'numeric',
                   month: '2-digit',
                   day: '2-digit'
@@ -320,7 +387,7 @@ export default async function InsightDetailPage({ params }: Props) {
                   case "PARAGRAPH":
                     return (
                       <p key={idx} className="body-kr text-[16px] sm:text-[17px] text-slate mb-6 leading-[1.85] text-justify whitespace-pre-wrap">
-                        {blockVal}
+                        {renderInlineRichText(blockVal)}
                       </p>
                     );
                   
@@ -328,7 +395,7 @@ export default async function InsightDetailPage({ params }: Props) {
                     return (
                       <blockquote key={idx} className="relative border-l-[3px] border-accent pl-6 py-1 my-10 italic text-[17px] sm:text-[18px] text-slate bg-paper-raised/30 rounded-r-lg pr-4">
                         <p className="body-kr font-medium m-0 leading-relaxed">
-                          “{blockVal}”
+                          “{renderInlineRichText(blockVal)}”
                         </p>
                         {block.author && (
                           <cite className="block not-italic text-[13px] text-slate font-bold mt-3 tracking-wide">
@@ -343,7 +410,7 @@ export default async function InsightDetailPage({ params }: Props) {
                       <div key={idx} className="bg-paper-raised/60 p-6 sm:p-8 rounded-lg my-10 border-l-[4px] border-accent">
                         <span className="micro-label text-accent font-bold">KEY TAKEAWAY</span>
                         <p className="body-kr mt-3 mb-0 text-[15.5px] sm:text-[16.5px] font-medium text-graphite leading-relaxed">
-                          {blockVal}
+                          {renderInlineRichText(blockVal)}
                         </p>
                       </div>
                     );
@@ -365,8 +432,8 @@ export default async function InsightDetailPage({ params }: Props) {
                             {block.rows && block.rows.map((row: string[], rIdx: number) => (
                               <tr key={rIdx} className="border-b border-hairline hover:bg-paper-raised/20">
                                 {row.map((cell: string, cIdx: number) => (
-                                  <td key={cIdx} className="py-4 px-4 text-graphite font-medium tnum whitespace-nowrap">
-                                    {cell}
+                                  <td key={cIdx} className="py-4 px-4 text-graphite font-medium tnum">
+                                    {renderInlineRichText(cell)}
                                   </td>
                                 ))}
                               </tr>
@@ -384,12 +451,57 @@ export default async function InsightDetailPage({ params }: Props) {
                           {block.items && block.items.map((item: string, iIdx: number) => (
                             <li key={iIdx} className="flex items-start gap-3 text-[15px] sm:text-[16px] text-slate leading-relaxed">
                               <span className="text-accent text-[18px] leading-none select-none">✓</span>
-                              <span className="body-kr">{item}</span>
+                              <span className="body-kr">{renderInlineRichText(item)}</span>
                             </li>
                           ))}
                         </ul>
                       </div>
                     );
+
+                  case "PDF_DOWNLOAD":
+                    return article.pdf_attachment ? (
+                      <PdfDownloadCard
+                        key={idx}
+                        attachment={article.pdf_attachment}
+                        previewToken={isPreview ? previewToken : undefined}
+                      />
+                    ) : null;
+
+                  case "RELATED_INSIGHT": {
+                    let targetHref = block.href || (relatedArticle ? `/insights/${relatedArticle.slug}` : "");
+                    if (
+                      isPreview &&
+                      relatedArticle?.preview_token &&
+                      targetHref === `/insights/${relatedArticle.slug}`
+                    ) {
+                      targetHref = `${targetHref}?preview=${encodeURIComponent(relatedArticle.preview_token)}`;
+                    }
+                    const targetTitle = block.title || relatedArticle?.title || blockVal;
+                    const targetDesc = block.description || relatedArticle?.excerpt || "";
+                    if (!targetHref || !targetTitle) return null;
+                    return (
+                      <div key={idx} className="my-10 rounded-lg border border-hairline bg-paper-raised p-6 sm:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                          <span className="micro-label text-accent font-bold">RELATED PRACTICAL GUIDE</span>
+                          <h3 className="body-kr mt-2 text-[18px] sm:text-[20px] font-bold text-graphite leading-snug">
+                            {targetTitle}
+                          </h3>
+                          {targetDesc && (
+                            <p className="body-kr mt-2 text-[14px] text-slate leading-relaxed">
+                              {targetDesc}
+                            </p>
+                          )}
+                        </div>
+                        <Link
+                          href={targetHref}
+                          className="shrink-0 inline-flex items-center gap-1.5 text-[13.5px] font-bold text-accent hover:text-accent-ink transition-colors"
+                        >
+                          <span>가이드 보러가기</span>
+                          <span aria-hidden="true">→</span>
+                        </Link>
+                      </div>
+                    );
+                  }
 
                   default:
                     return null;
@@ -397,6 +509,14 @@ export default async function InsightDetailPage({ params }: Props) {
               })
             )}
           </div>
+
+          {/* 자동 PDF 다운로드 카드 표시 (본문 내 PDF_DOWNLOAD 블록이 별도로 없는 경우) */}
+          {!hasInlinePdfBlock && article.pdf_attachment && (
+            <PdfDownloadCard
+              attachment={article.pdf_attachment}
+              previewToken={isPreview ? previewToken : undefined}
+            />
+          )}
 
           {/* 🌟 SHARED CONTENT OVERRIDES: BRAND EXPERIENCE STYLING */}
           
@@ -513,13 +633,20 @@ export default async function InsightDetailPage({ params }: Props) {
 }
 
 // metadata 생성
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { slug } = await params;
+  const resolvedSearch = searchParams ? await searchParams : {};
+  const previewToken = resolvedSearch?.preview;
   const portalApiUrl = process.env.PORTAL_API_URL || "http://localhost:3010";
   let article = null;
 
   try {
-    const res = await fetch(`${portalApiUrl}/api/insights?slug=${slug}&channel=K_SELECT_NETWORK`);
+    const res = await fetch(
+      `${portalApiUrl}/api/insights?slug=${encodeURIComponent(slug)}&channel=K_SELECT_NETWORK${
+        previewToken ? `&preview=${encodeURIComponent(previewToken)}` : ""
+      }`,
+      { cache: "no-store" }
+    );
     if (res.ok) {
       const data = await res.json();
       article = data.article;
@@ -532,12 +659,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!article) {
     return {
-      title: "아티클을 찾을 수 없음 — K Select Network"
+      title: "아티클을 찾을 수 없음 — K Select Network",
+      robots: previewToken ? { index: false, follow: false } : undefined,
     };
   }
 
   return {
     title: `${article.seo_title || article.title} — K Select Network`,
     description: article.meta_description || article.excerpt,
+    robots: previewToken ? { index: false, follow: false } : undefined,
   };
 }
